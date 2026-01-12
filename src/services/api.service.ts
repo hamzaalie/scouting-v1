@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api';
+// Default to production API if env is not provided
+const API_BASE_URL =
+  process.env.REACT_APP_BACKEND_URL || 'https://api.idasports.io/api';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({

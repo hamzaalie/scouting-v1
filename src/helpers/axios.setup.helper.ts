@@ -1,6 +1,10 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
 
-export const API_URL = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_PREFIX}`;
+const API_BASE_URL = `${
+    process.env.REACT_APP_API_URL || "https://api.idasports.io"
+}${process.env.REACT_APP_API_PREFIX || "/api"}`;
+
+export const API_URL = API_BASE_URL;
 
 const httpsAgent = undefined;
 
