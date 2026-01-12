@@ -1,0 +1,84 @@
+.badge.bg-wave {
+    background-color: rgba(0, 151, 220, 0.2) !important; /* Bleu Wave */
+    color: #0097dc; /* Bleu Wave */
+}
+
+.badge.bg-orange {
+    background-color: #ff790033 !important; /* Orange */
+    color: #ff7900; /* Orange */
+}
+
+.badge.bg-moov {
+    background-color: rgba(0, 168, 89, 0.2) !important; /* Vert Moov */
+    color: #00a859; /* Vert Moov */
+}
+
+.badge.bg-cinetpay {
+    background-color: rgba(245, 63, 24, 0.2) !important; /* Orange Cinetpay */
+    color: #F53F18; /* Orange Cinetpay */
+}
+
+.badge.bg-mtn {
+    background-color: rgba(255, 204, 0, 0.2) !important; /* Jaune MTN */
+    color: #ffcc00; /* Jaune MTN */
+}
+
+.badge.bg-visa {
+    background-color: rgba(26, 31, 113, 0.2) !important; /* Bleu Visa */
+    color: #1a1f71; /* Bleu Visa */
+}
+
+.badge.bg-mastercard {
+    background-color: rgba(235, 0, 27, 0.2) !important; /* Rouge Mastercard */
+    color: #eb001b; /* Rouge Mastercard */
+}
+
+.badge.bg-mastercard-alt {
+    background-color: rgba(247, 158, 27, 0.2) !important; /* Orange Mastercard */
+    color: #f79e1b; /* Orange Mastercard */
+}
+
+.badge.bg-primary-custom {
+    background-color: rgba(0, 123, 255, 0.2) !important; /* Primary Blue */
+    color: #007bff; /* Primary Blue */
+}
+
+.badge.bg-secondary-custom {
+    background-color: rgba(108, 117, 125, 0.2) !important; /* Secondary Gray */
+    color: #6c757d; /* Secondary Gray */
+}
+
+.badge.bg-success-custom {
+    background-color: rgba(40, 167, 69, 0.2) !important; /* Success Green */
+    color: #28a745; /* Success Green */
+}
+
+.badge.bg-danger-custom {
+    background-color: rgba(220, 53, 69, 0.2) !important; /* Danger Red */
+    color: #dc3545; /* Danger Red */
+}
+
+.badge.bg-warning-custom {
+    background-color: rgba(255, 193, 7, 0.2) !important; /* Warning Yellow */
+    color: #ffc107; /* Warning Yellow */
+}
+
+.badge.bg-info-custom {
+    background-color: rgba(23, 162, 184, 0.2) !important; /* Info Cyan */
+    color: #17a2b8; /* Info Cyan */
+}
+
+.badge.bg-light-custom {
+    background-color: rgba(248, 249, 250, 0.2) !important; /* Light Gray */
+    color: #f8f9fa; /* Light Gray */
+}
+
+.badge.bg-dark-custom {
+    background-color: rgba(52, 58, 64, 0.2) !important; /* Dark Gray */
+    color: #343a40; /* Dark Gray */
+}
+
+.badge.bg-custom-custom {
+    background-color: rgba(255, 105, 180, 0.2) !important; /* Custom Pink */
+    color: #ff69b4; /* Custom Pink */
+}
