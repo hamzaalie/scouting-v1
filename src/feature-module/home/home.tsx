@@ -64,7 +64,7 @@ const Home = () => {
 
     const handleSubscribe = async (plan: SubscriptionPlan) => {
         // Check if user is logged in
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             toast.info(t('common.pleaseLoginFirst') || 'Please login first to subscribe');
             navigate(routes.login);
@@ -93,7 +93,7 @@ const Home = () => {
 
     const handleTestModeSubscribe = async (plan: SubscriptionPlan) => {
         // Check if user is logged in
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             toast.info(t('common.pleaseLoginFirst') || 'Please login first to subscribe');
             navigate(routes.login);

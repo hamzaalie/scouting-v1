@@ -29,7 +29,7 @@ const LanguageSwitcher: React.FC = () => {
 	};
 
 	return (
-		<div className="relative group" style={{ display: 'inline-block' }}>
+		<div className="relative group" style={{ display: 'inline-block', position: 'relative', zIndex: 1000 }}>
 			<button
 				type="button"
 				className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-2"
