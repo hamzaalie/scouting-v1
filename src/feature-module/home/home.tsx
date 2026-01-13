@@ -7,7 +7,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {Link, useNavigate} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {subscriptionsAPI} from "../../services/api.service";
+import {subscriptionsAPI, paymentsAPI} from "../../services/api.service";
 import {toast} from "react-toastify";
 import {useTranslation} from "react-i18next";
 
@@ -26,6 +26,9 @@ const Home = () => {
     const { t } = useTranslation();
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [processingPayment, setProcessingPayment] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+    const [currentSubscription, setCurrentSubscription] = useState<{ status: string; expires_at: string } | null>(null);
 
     // Subscription plans
     const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -47,7 +50,162 @@ const Home = () => {
             }
         };
         fetchPlans();
+        fetchCurrentSubscription();
     }, []);
+
+    const fetchCurrentSubscription = async () => {
+        try {
+            const response = await subscriptionsAPI.getStatus();
+            setCurrentSubscription(response);
+        } catch (error) {
+            console.log('No current subscription');
+        }
+    };
+
+    const handleSubscribe = async (plan: SubscriptionPlan) => {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        if (!token) {
+            toast.info(t('common.pleaseLoginFirst') || 'Please login first to subscribe');
+            navigate(routes.login);
+            return;
+        }
+
+        try {
+            setProcessingPayment(true);
+            setSelectedPlan(plan.id);
+
+            // Initiate payment
+            const paymentData = await paymentsAPI.initiate(plan.id, plan.price);
+
+            toast.success('Redirecting to payment gateway...');
+            
+            // Redirect to CinetPay checkout
+            redirectToCinetPay(paymentData);
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            toast.error('Payment initiation failed');
+            setProcessingPayment(false);
+            setSelectedPlan(null);
+        }
+    };
+
+    const handleTestModeSubscribe = async (plan: SubscriptionPlan) => {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        if (!token) {
+            toast.info(t('common.pleaseLoginFirst') || 'Please login first to subscribe');
+            navigate(routes.login);
+            return;
+        }
+
+        try {
+            setProcessingPayment(true);
+            setSelectedPlan(plan.id);
+
+            // Initiate payment
+            const paymentData = await paymentsAPI.initiate(plan.id, plan.price);
+
+            toast.info('🧪 TEST MODE: Simulating successful payment...', { autoClose: 2000 });
+            
+            // Call test webhook to complete payment
+            setTimeout(async () => {
+                try {
+                    const response = await fetch(
+                        `http://localhost:3000/api/webhooks/test-payment-success?transaction_id=${paymentData.transactionId}`
+                    );
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        toast.success('✅ Test payment completed! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = '/payment/success?transaction_id=' + paymentData.transactionId;
+                        }, 1500);
+                    } else {
+                        throw new Error(result.error || 'Test payment failed');
+                    }
+                } catch (error) {
+                    console.error('Test payment error:', error);
+                    toast.error('Test payment failed');
+                    setProcessingPayment(false);
+                    setSelectedPlan(null);
+                }
+            }, 2000);
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            toast.error('Payment initiation failed');
+            setProcessingPayment(false);
+            setSelectedPlan(null);
+        }
+    };
+
+    const redirectToCinetPay = (paymentData: {
+        transactionId: string;
+        amount: number;
+        plan: string;
+        user: { email: string; id: string };
+        cinetpayConfig: {
+            apikey: string;
+            site_id: string;
+            notify_url: string;
+            return_url: string;
+            cancel_url: string;
+        };
+    }) => {
+        const { transactionId, amount, plan, user, cinetpayConfig } = paymentData;
+
+        // CinetPay Seamless Integration
+        const win = window as Window & { CinetPay?: { setConfig: (config: Record<string, string>) => void; getCheckout: (data: Record<string, unknown>) => void; waitResponse: (callback: (data: { status: string }) => void) => void; onError: (callback: (data: { message?: string }) => void) => void } };
+        if (typeof win.CinetPay !== 'undefined') {
+            win.CinetPay.setConfig({
+                apikey: cinetpayConfig.apikey,
+                site_id: cinetpayConfig.site_id,
+                notify_url: cinetpayConfig.notify_url,
+                mode: 'PRODUCTION'
+            });
+
+            win.CinetPay.getCheckout({
+                transaction_id: transactionId,
+                amount: amount,
+                currency: 'XOF',
+                channels: 'ALL',
+                description: `Subscription ${plan}`,
+                customer_name: user.email.split('@')[0],
+                customer_surname: user.email.split('@')[0],
+                customer_email: user.email,
+                customer_phone_number: '0000000000',
+                customer_address: 'N/A',
+                customer_city: 'Abidjan',
+                customer_country: 'CI',
+                customer_state: 'CI',
+                customer_zip_code: '00000',
+            });
+
+            win.CinetPay.waitResponse((data) => {
+                if (data.status === 'REFUSED') {
+                    toast.error('Payment was refused');
+                    setProcessingPayment(false);
+                    setSelectedPlan(null);
+                } else if (data.status === 'ACCEPTED') {
+                    toast.success('Payment successful!');
+                    window.location.href = cinetpayConfig.return_url + '?transaction_id=' + transactionId;
+                }
+            });
+
+            win.CinetPay.onError((data) => {
+                console.error('CinetPay Error:', data);
+                toast.error('Payment error: ' + (data.message || 'Unknown error'));
+                setProcessingPayment(false);
+                setSelectedPlan(null);
+            });
+        } else {
+            toast.error('Payment system not loaded. Please refresh the page.');
+            setProcessingPayment(false);
+            setSelectedPlan(null);
+        }
+    };
 
     //console.log("🚀 ~ Pricing ~ packsToDisplay:", packsToDisplay);
 
@@ -445,6 +603,29 @@ const Home = () => {
                             {t('pricing.customServices')}
                         </p>
                     </div>
+
+                    {/* Active Subscription Alert with M3 Login */}
+                    {currentSubscription && currentSubscription.status === 'active' && (
+                        <div className="alert alert-success mb-4 d-flex justify-content-between align-items-center" data-aos="fade-up">
+                            <div>
+                                <h5 className="mb-1">✅ Active Subscription</h5>
+                                <p className="mb-0">
+                                    Your subscription is active until{' '}
+                                    {new Date(currentSubscription.expires_at).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <a
+                                href="http://localhost:5173"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-primary"
+                            >
+                                <i className="feather-external-link me-2"></i>
+                                Login to M3 Platform
+                            </a>
+                        </div>
+                    )}
+
                     <div className="price-wrap aos" data-aos="fade-up">
                         <div className="row justify-content-center">
                             {loading ? (
@@ -519,12 +700,39 @@ const Home = () => {
                                                     </ul>
                                                 </div>
                                                 <div className="price-choose">
-                                                    <Link
-                                                        to={routes.userSubscriptions}
-                                                        className="btn viewdetails-btn"
+                                                    <button
+                                                        onClick={() => handleSubscribe(plan)}
+                                                        disabled={processingPayment || (currentSubscription?.status === 'active')}
+                                                        className="btn viewdetails-btn w-100 mb-2"
                                                     >
-                                                        {t('pricing.choose')}
-                                                    </Link>
+                                                        {processingPayment && selectedPlan === plan.id ? (
+                                                            <>
+                                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                                Processing...
+                                                            </>
+                                                        ) : currentSubscription?.status === 'active' ? (
+                                                            'Already Subscribed'
+                                                        ) : (
+                                                            t('pricing.choose')
+                                                        )}
+                                                    </button>
+
+                                                    {/* TEST MODE BUTTON */}
+                                                    <button
+                                                        onClick={() => handleTestModeSubscribe(plan)}
+                                                        disabled={processingPayment || (currentSubscription?.status === 'active')}
+                                                        className="btn btn-warning w-100 btn-sm"
+                                                        style={{ fontSize: '0.85rem' }}
+                                                    >
+                                                        {processingPayment && selectedPlan === plan.id ? (
+                                                            <>
+                                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                                Testing...
+                                                            </>
+                                                        ) : (
+                                                            '🧪 Test Mode (Skip Payment)'
+                                                        )}
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
