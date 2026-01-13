@@ -38,7 +38,7 @@ export function formatDate(dateString: string, locale: string = "fr-FR"): string
 
         // Check if date is valid
         if (isNaN(date.getTime())) {
-            return "Date invalide";
+            return locale === "en-US" ? "Invalid date" : "Date invalide";
         }
 
         // Format the date using Intl formatter

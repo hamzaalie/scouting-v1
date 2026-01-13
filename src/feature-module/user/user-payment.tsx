@@ -7,11 +7,13 @@ import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {backendFunctions} from "../../helpers/backend.helper";
 import {paymentService} from "../../helpers/payment.service";
 import {paymentStatusMap, tPaymentStatusDetail} from "../../types/transaction.type";
+import {useTranslation} from "react-i18next";
 
 const PaymentResultPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const routes = all_routes;
+    const { t } = useTranslation();
     const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
     const [paymentDetails, setPaymentDetails] = useState<tPaymentStatusDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);

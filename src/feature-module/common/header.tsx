@@ -5,12 +5,15 @@ import ImageWithBasePath from "../../core/data/img/ImageWithBasePath";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {toast} from "react-toastify";
 import {idaSportsUserInterface} from "../../core/data/interface/model";
+import {useTranslation} from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 const Header = () => {
     const routes = all_routes;
     const location = useLocation();
     const isUserConnected: idaSportsUserInterface = localStorageFunctions.getUser();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         // Fermer le menu mobile lors du changement de route
@@ -19,7 +22,7 @@ const Header = () => {
 
     const header = [
         {
-            tittle: "Accueil",
+            tittle: t('common.home'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.home,
@@ -28,7 +31,7 @@ const Header = () => {
             menuId: "homePage",
         },
         {
-            tittle: "À propos de nous",
+            tittle: t('common.about'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.aboutUs,
@@ -37,7 +40,7 @@ const Header = () => {
             menuId: "aboutPage",
         },
         {
-            tittle: "Packs",
+            tittle: t('common.pricing'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.pricing,
@@ -55,7 +58,7 @@ const Header = () => {
             menuId: "faqPage",
         },
         {
-            tittle: "Nous contacter",
+            tittle: t('common.contact'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.contactUs,
@@ -76,7 +79,7 @@ const Header = () => {
             localStorageFunctions.removeUser();
             window.location.href = routes.login;
         } else {
-            toast.info("Veuillez vous connecter.", {
+            toast.info(t('auth.loginPrompt'), {
                 toastId: "defaultToast",
                 theme: "colored",
             });
@@ -224,7 +227,7 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-menu" />
                                             </span>
-                                            Tableau de Bord
+                                            {t('auth.dashboard')}
                                         </Link>
                                     </li>
                                     <li className="nav-item">
@@ -233,7 +236,7 @@ const Header = () => {
                                                 <span>
                                                     <i className="feather-log-out" />
                                                 </span>
-                                                Se déconnecter
+                                                {t('auth.logout')}
                                             </Link>{" "}
                                         </div>
                                     </li>
@@ -249,7 +252,7 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-users" />
                                             </span>
-                                            Se connecter / S&apos;inscrire
+                                            {t('auth.loginSignup')}
                                         </Link>{" "}
                                     </li>
                                 </div>
@@ -260,6 +263,11 @@ const Header = () => {
                         className="nav header-navbar-rht"
                         style={isMobileMenuOpen ? {display: "none"} : {}}
                     >
+                        {/* Language Switcher */}
+                        <li className="nav-item" style={{ marginRight: '1rem' }}>
+                            <LanguageSwitcher />
+                        </li>
+                        
                         {isUserConnected && isUserConnected?.firstName && (
                             <>
                                 <li className="nav-item">
@@ -270,7 +278,7 @@ const Header = () => {
                                         <span>
                                             <i className="feather-menu" />
                                         </span>
-                                        Tableau de Bord
+                                        {t('auth.dashboard')}
                                     </Link>
                                 </li>
                                 <li className="nav-item">
@@ -279,7 +287,7 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-log-out" />
                                             </span>
-                                            Se déconnecter
+                                            {t('auth.logout')}
                                         </Link>{" "}
                                     </div>
                                 </li>
@@ -292,7 +300,7 @@ const Header = () => {
                                         <span>
                                             <i className="feather-users" />
                                         </span>
-                                        Se connecter / S&apos;inscrire
+                                        {t('auth.loginSignup')}
                                     </Link>{" "}
                                 </li>
                             </>

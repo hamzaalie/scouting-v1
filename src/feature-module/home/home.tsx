@@ -14,10 +14,12 @@ import {formatPrice} from "../../helpers/input.helper";
 import {paymentService} from "../../helpers/payment.service";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
 
 const Home = () => {
     const routes = all_routes;
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     //Handle Switch
     const [countryModechecked, setCountryModeChecked] = useState({

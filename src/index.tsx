@@ -21,6 +21,9 @@ import {AuthProvider} from "./context/AuthContext";
 import {Bounce, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Import i18n configuration
+import "./i18n/config";
+
 const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = ReactDOM.createRoot(rootElement);
