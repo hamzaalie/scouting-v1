@@ -7,115 +7,47 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {Link, useNavigate} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {tPack} from "../../types/pack.type";
-import {backendFunctions} from "../../helpers/backend.helper";
-import {InputSwitch} from "primereact/inputswitch";
-import {formatPrice} from "../../helpers/input.helper";
-import {paymentService} from "../../helpers/payment.service";
-import {localStorageFunctions} from "../../helpers/localStorage.helper";
+import {subscriptionsAPI} from "../../services/api.service";
 import {toast} from "react-toastify";
 import {useTranslation} from "react-i18next";
+
+interface SubscriptionPlan {
+    id: string;
+    name: string;
+    price: number;
+    currency: string;
+    duration: number;
+    features: string[];
+}
 
 const Home = () => {
     const routes = all_routes;
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    //Handle Switch
-    const [countryModechecked, setCountryModeChecked] = useState({
-        checked: false,
-        mode: "local",
-    });
-    const [periodChecked, setPeriodChecked] = useState({
-        checked: false,
-        mode: "mois",
-    });
-
     const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSwitchCountry = () => {
-        setCountryModeChecked((prev) => ({
-            ...prev,
-            checked: !prev.checked,
-            mode: prev.mode === "local" ? "international" : "local",
-        }));
-    };
-
-    const handleSwitchPeriod = () => {
-        setPeriodChecked((prev) => ({
-            ...prev,
-            checked: !prev.checked,
-            mode: prev.mode === "mois" ? "année" : "mois",
-        }));
-    };
-
-    const handleChoicePack = (chosenPack: tPack) => {
-        // Prevent multiple clicks
-        if (loading) return;
-        setLoading(true);
-
-        // Use our payment service to handle the flow
-        //! TODO : Change price to real one after all test period
-        const redirectUrl = paymentService.initiatePaymentProcess({...chosenPack, price: 100});
-
-        if (localStorageFunctions.isUserLoggedIn()) {
-            // User is logged in, show success toast and redirect to payment
-            toast.success("Vous serez redirigé(e) vers la page de paiement...", {
-                toastId: "redirectToast",
-                theme: "colored",
-            });
-            setTimeout(() => {
-                //! TODO : Change price to real one after all test period
-                navigate(redirectUrl, {state: {...chosenPack, price: 100}});
-                setLoading(false);
-            }, 1500);
-        } else {
-            // User is not logged in, redirect to login page
-            // The toast is already shown by the paymentService
-            setTimeout(() => {
-                navigate(redirectUrl);
-                setLoading(false);
-            }, 1000);
-        }
-    };
-
-    //All Packs fetched
-    const [allPacks, setAllPacks] = useState<Array<tPack>>([]);
-    const [packsToDisplay, setPacksToDisplay] = useState<Array<tPack>>([]);
+    // Subscription plans
+    const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+    const [displayedPlans, setDisplayedPlans] = useState<SubscriptionPlan[]>([]);
 
     useEffect(() => {
-        //Query
-        backendFunctions.packs
-            .getAllPacks()
-            .then((response) => {
-                //console.log("🚀 ~ .then ~ response:", response);
-                setAllPacks(response);
-                setPacksToDisplay(
-                    response.filter(
-                        (pack: tPack) =>
-                            pack.option === countryModechecked.mode &&
-                            pack.period === periodChecked.mode
-                    )
-                );
-            })
-            .catch((error) => {
-                //console.log("🚀 ~ Pricing ~ error:", error);
-                setAllPacks([]);
-            });
+        // Fetch subscription plans
+        const fetchPlans = async () => {
+            try {
+                setLoading(true);
+                const response = await subscriptionsAPI.getPlans();
+                setPlans(response.plans);
+                setDisplayedPlans(response.plans);
+            } catch (error) {
+                console.error('Error fetching plans:', error);
+                toast.error('Failed to load subscription plans');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPlans();
     }, []);
-
-    useEffect(() => {
-        setPacksToDisplay(
-            allPacks
-                .sort((a, b) => a.price - b.price)
-                .filter(
-                    (pack) =>
-                        pack.option === countryModechecked.mode &&
-                        pack.period === periodChecked.mode
-                )
-        );
-        //console.log("🚀 ~ Pricing in useEffect ~ packsToDisplay:", packsToDisplay);
-    }, [countryModechecked, periodChecked]);
 
     //console.log("🚀 ~ Pricing ~ packsToDisplay:", packsToDisplay);
 
@@ -508,37 +440,10 @@ const Home = () => {
                 </div>
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
-                        <h2>
-                            Nous avons de <span>super Packs pour vous</span>
-                        </h2>
+                        <h2 dangerouslySetInnerHTML={{ __html: t('pricing.greatPacksTitle') }} />
                         <p className="sub-title">
-                            Nous proposons des services sur mesure en fonction de vos besoins
-                            spécifiques.
+                            {t('pricing.customServices')}
                         </p>
-                    </div>
-                    <div hidden className="interset-btn aos" data-aos="fade-up">
-                        <div className="status-toggle d-inline-flex align-items-center">
-                            National{" "}
-                            <InputSwitch
-                                key={"packCountryMode"}
-                                style={{margin: "0 10px"}}
-                                checked={countryModechecked.checked}
-                                onChange={() => handleSwitchCountry()}
-                            />
-                            International
-                        </div>
-                    </div>
-                    <div className="interset-btn aos" data-aos="fade-up">
-                        <div className="status-toggle d-inline-flex align-items-center">
-                            Mensuel{" "}
-                            <InputSwitch
-                                key={"packPeriod"}
-                                style={{margin: "0 10px"}}
-                                checked={periodChecked.checked}
-                                onChange={() => handleSwitchPeriod()}
-                            />
-                            Annuel
-                        </div>
                     </div>
                     <div className="price-wrap aos" data-aos="fade-up">
                         <div className="row justify-content-center">
@@ -547,108 +452,79 @@ const Home = () => {
                                     <div className="spinner-border text-primary" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
-                                    <p className="mt-2">Chargement des packs...</p>
+                                    <p className="mt-2">Loading subscription plans...</p>
                                 </div>
-                            ) : packsToDisplay.length <= 0 ? (
+                            ) : displayedPlans.length <= 0 ? (
                                 <div className="text-center">
                                     <ImageWithBasePath
                                         src={"assets/img/no-data.svg"}
-                                        alt="No pack found"
+                                        alt="No plans found"
                                         style={{
                                             height: "22.5rem",
                                         }}
                                     />
                                     <p className="mt-3">
-                                        Aucun pack disponible pour cette sélection
+                                        No subscription plans available
                                     </p>
                                 </div>
                             ) : (
-                                packsToDisplay.map((pack, index) => (
+                                displayedPlans.map((plan, index) => (
                                     <div
                                         className="col-lg-4 d-flex col-md-6"
-                                        key={pack.id || index}
+                                        key={plan.id || index}
                                     >
                                         <div className="price-card flex-fill">
                                             <div
                                                 className={
-                                                    pack.title.includes("Or")
+                                                    plan.id === "annual"
                                                         ? "price-head expert-price"
                                                         : "price-head"
                                                 }
                                             >
                                                 <ImageWithBasePath
                                                     src={
-                                                        pack.title.includes("Or")
+                                                        plan.id === "annual"
                                                             ? "assets/img/icons/price-02.svg"
                                                             : "assets/img/icons/price-01.svg"
                                                     }
                                                     alt="Price"
                                                 />
 
-                                                <h3>{pack.title}</h3>
-                                                <span hidden={!pack.title.includes("Or")}>
-                                                    Recommandé
+                                                <h3>{plan.name}</h3>
+                                                <span hidden={plan.id !== "annual"}>
+                                                    {t('common.recommended')}
                                                 </span>
                                             </div>
                                             <div className="price-body">
                                                 <div className="per-month">
                                                     <h2>
                                                         <span>
-                                                            {formatPrice(
-                                                                pack.currency === "XOF"
-                                                                    ? "fr-FR"
-                                                                    : "en-US",
-                                                                pack.price,
-                                                                pack.currency
-                                                            )}
+                                                            ${plan.price}
                                                         </span>
-
-                                                        {pack.currency === "EUR" ? (
-                                                            <sup>&euro;</sup>
-                                                        ) : pack.currency === "USD" ? (
-                                                            <sup>&dollar;</sup>
-                                                        ) : (
-                                                            <sup>FCFA</sup>
-                                                        )}
+                                                        <sup>&dollar;</sup>
                                                     </h2>
                                                     <span>
-                                                        Par{" "}
-                                                        {pack.period.replace(
-                                                            pack.period[0],
-                                                            pack.period[0].toUpperCase()
-                                                        )}{" "}
-                                                        HT
+                                                        per {plan.duration} days
                                                     </span>
                                                 </div>
                                                 <div className="features-price-list">
-                                                    <h5>Options</h5>
-                                                    <p>Vidéos</p>
+                                                    <h5>{t('common.features')}</h5>
                                                     <ul>
-                                                        <li className="active">
-                                                            <i className="feather-check-circle" />
-                                                            Inclus : Championnat de U20
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="feather-check-circle" />
-                                                            Inclus : Analyse Data (Données){" "}
-                                                        </li>
+                                                        {plan.features.map((feature, idx) => (
+                                                            <li key={idx} className="active">
+                                                                <i className="feather-check-circle" />
+                                                                {feature}
+                                                            </li>
+                                                        ))}
                                                     </ul>
                                                 </div>
                                                 <div className="price-choose">
-                                                    <button
-                                                        onClick={() => handleChoicePack(pack)}
+                                                    <Link
+                                                        to={routes.userSubscriptions}
                                                         className="btn viewdetails-btn"
-                                                        disabled={loading}
                                                     >
-                                                        {loading ? (
-                                                            <>
-                                                                <i className="feather-loader me-2"></i>
-                                                                Traitement...
-                                                            </>
-                                                        ) : (
-                                                            "Choisissez votre pack"
-                                                        )}
-                                                    </button>
+                                                        {t('pricing.choose')}
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
