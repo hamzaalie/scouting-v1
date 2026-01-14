@@ -230,16 +230,14 @@ const Home = () => {
                             <div className="col-lg-7 col-md-10 mx-auto">
                                 <div className="section-search aos" data-aos="fade-up">
                                     <h1>
-                                        Bienvenue{" "}
+                                        {t('homePage.heroTitle')}{" "}
                                         <span style={{textTransform: "lowercase", color: "#fff"}}>
-                                            sur
+                                            {t('homePage.heroTitleOn')}
                                         </span>{" "}
-                                        <span>IDA</span>, Intelligence Data Analytics
+                                        <span>{t('homePage.heroTitleIDA')}</span>, {t('homePage.heroTitleFull')}
                                     </h1>
                                     <p className="sub-info">
-                                        Nous redéfinissons l&apos;avenir du football en Côte
-                                        d&apos;Ivoire grâce à l&apos;exploitation des données
-                                        sportives avancées.
+                                        {t('homePage.heroSubtitle')}
                                     </p>
                                 </div>
                             </div>
@@ -261,12 +259,9 @@ const Home = () => {
             <section className="section work-section">
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
-                        <h2>
-                            En <span>bref...</span>
-                        </h2>
+                        <h2 dangerouslySetInnerHTML={{ __html: t('homePage.briefTitle') }} />
                         <p className="sub-title">
-                            Notre projet se concentre sur la collecte et l&apos;analyse de données
-                            précises et détaillées, directement issues des matchs.
+                            {t('homePage.briefSubtitle')}
                         </p>
                     </div>
                     <div className="row justify-content-center ">
@@ -282,16 +277,10 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>Une technologie puissante</Link>
+                                        <Link to={"#"}>{t('homePage.feature1Title')}</Link>
                                     </h5>
                                     <p>
-                                        Nous utilisons les dernières technologies de caméras IA pour
-                                        capturer chaque instant du jeu, permettant une analyse
-                                        approfondie des performances des joueurs et des équipes.{" "}
-                                        <br />
-                                        Ces outils innovants offrent une vue d&apos;ensemble unique,
-                                        capturant des angles impossibles à obtenir par les moyens
-                                        traditionnels.
+                                        {t('homePage.feature1Text')}
                                     </p>
                                 </div>
                             </div>
@@ -308,17 +297,13 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}> Des performances optimales obtenues</Link>
+                                        <Link to={"#"}>{t('homePage.feature2Title')}</Link>
                                     </h5>
                                     <p>
-                                        Nos équipes d&apos;experts transforment ces données en
-                                        informations exploitables, offrant aux clubs, entraîneurs,
-                                        et agents des insights précis pour améliorer les stratégies
-                                        de jeu, optimiser les performances des joueurs, et
-                                        identifier les talents prometteurs.
+                                        {t('homePage.feature2Text')}
                                         <br />
                                         <span style={{color: "#74aef5"}} className="fw-bold">
-                                            Avec IDA, chaque détail compte.
+                                            {t('homePage.feature2Highlight')}
                                         </span>
                                     </p>
                                 </div>
@@ -336,19 +321,15 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>Un succès accéléré</Link>
+                                        <Link to={"#"}>{t('homePage.feature3Title')}</Link>
                                     </h5>
                                     <p>
-                                        Que vous soyez un club à la recherche d&apos;un avantage
-                                        compétitif, un agent souhaitant repérer le prochain grand
-                                        talent, ou un passionné du football désireux de comprendre
-                                        le jeu sous un nouvel angle, <br />
+                                        {t('homePage.feature3Text')} <br />
                                         <span style={{color: "#74aef5"}} className="fw-bold">
-                                            IDA est votre partenaire idéal.
+                                            {t('homePage.feature3Highlight')}
                                         </span>{" "}
                                         <br />
-                                        Découvrez comment la puissance des données peut transformer
-                                        le football ivoirien.
+                                        {t('homePage.feature3Text2')}
                                     </p>
                                 </div>
                             </div>
@@ -361,13 +342,9 @@ const Home = () => {
             <section className="section journey-section">
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
-                        <h2>
-                            Qu&apos;est-ce-que <span>IDA</span> ?
-                        </h2>
+                        <h2 dangerouslySetInnerHTML={{ __html: t('homePage.whatIsIDATitle') }} />
                         <p className="sub-title">
-                            IDA est un projet innovant dédié à la collecte, l&apos;analyse, et
-                            l&apos;exploitation des données sportives en Côte d&apos;Ivoire,
-                            principalement dans le football
+                            {t('homePage.whatIsIDASubtitle')}
                         </p>
                     </div>
                     <div className="row">
@@ -384,9 +361,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.expertise}>Notre Expertise</Link>
+                                        <Link to={routes.expertise}>{t('homePage.ourExpertise')}</Link>
                                     </h4>
-                                    <Link to={routes.expertise}>Voir plus</Link>
+                                    <Link to={routes.expertise}>{t('homePage.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -403,9 +380,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.mission}>Notre Mission</Link>
+                                        <Link to={routes.mission}>{t('homePage.ourMission')}</Link>
                                     </h4>
-                                    <Link to={routes.mission}>Voir plus</Link>
+                                    <Link to={routes.mission}>{t('homePage.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -422,9 +399,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.whyIDA}>Pourquoi IDA ?</Link>
+                                        <Link to={routes.whyIDA}>{t('homePage.whyIDA')}</Link>
                                     </h4>
-                                    <Link to={routes.whyIDA}>Voir plus</Link>
+                                    <Link to={routes.whyIDA}>{t('homePage.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -441,9 +418,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.team}>Notre Équipe</Link>
+                                        <Link to={routes.team}>{t('homePage.ourTeam')}</Link>
                                     </h4>
-                                    <Link to={routes.team}>Voir plus</Link>
+                                    <Link to={routes.team}>{t('homePage.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -453,7 +430,7 @@ const Home = () => {
                             to={routes.aboutUs}
                             className="btn btn-secondary d-inline-flex align-items-center"
                         >
-                            Qui sommes-nous ?{" "}
+                            {t('homePage.aboutUsLink')}{" "}
                             <span className="lh-1">
                                 <i className="feather-arrow-right-circle ms-2" />
                             </span>
@@ -467,11 +444,9 @@ const Home = () => {
             <section className="section convenient-section">
                 <div className="container">
                     <div className="convenient-content aos" data-aos="fade-up">
-                        <h2>Une Vision pour Transformer le Football en Côte d&apos;Ivoire</h2>
+                        <h2>{t('homePage.visionTitle')}</h2>
                         <p>
-                            Ensemble, nous partageons une vision commune : élever le football en
-                            Côte d&apos;Ivoire à un nouveau niveau grâce à l&apos;innovation et aux
-                            données.
+                            {t('homePage.visionText')}
                         </p>
                     </div>
                     <div className="convenient-btns aos" data-aos="fade-up">
@@ -479,7 +454,7 @@ const Home = () => {
                             to={routes.register}
                             className="btn btn-primary d-inline-flex align-items-center"
                         >
-                            Rejoignez-nous{" "}
+                            {t('homePage.joinUs')}{" "}
                             <span className="lh-1">
                                 <i className="feather-arrow-right-circle ms-2" />
                             </span>
@@ -488,7 +463,7 @@ const Home = () => {
                             to={routes.pricing}
                             className="btn btn-secondary d-inline-flex align-items-center"
                         >
-                            Plans des packs{" "}
+                            {t('homePage.pricingPlans')}{" "}
                             <span className="lh-1">
                                 <i className="feather-arrow-right-circle ms-2" />
                             </span>
@@ -504,49 +479,41 @@ const Home = () => {
                     <div className="row">
                         <div className="col-lg-6 d-flex align-items-center">
                             <div className="start-your-journey aos" data-aos="fade-up">
-                                <h2>
-                                    Rejoignez-nous dans cette aventure{" "}
-                                    <span className="active-sport">IDA</span> aujourd&apos;hui.
-                                </h2>
+                                <h2 dangerouslySetInnerHTML={{ __html: t('homePage.joinAdventureTitle') }} />
                                 <p>
-                                    Explorez notre site pour en savoir plus sur nos services, nos
-                                    solutions technologiques, et comment nous pouvons collaborer
-                                    pour élever le football en Côte d&apos;Ivoire à un niveau
-                                    supérieur
+                                    {t('homePage.joinAdventureText1')}
                                 </p>
                                 <p>
-                                    Ensemble, nous pouvons créer un écosystème où les données et la
-                                    technologie permettent de repousser les limites du possible dans
-                                    le football ivoirien.
+                                    {t('homePage.joinAdventureText2')}
                                 </p>
-                                <span className="stay-approach">Nous invitons les : </span>
+                                <span className="stay-approach">{t('homePage.weInvite')} </span>
                                 <div className="journey-list">
                                     <ul>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            Clubs
+                                            {t('homePage.clubs')}
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            Entraîneurs
+                                            {t('homePage.coaches')}
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            Agents
+                                            {t('homePage.agents')}
                                         </li>
                                     </ul>
                                     <ul>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            Spécialistes en technologie
+                                            {t('homePage.techSpecialists')}
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            Professionnels de l&apos;analyse de données
+                                            {t('homePage.dataAnalysts')}
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            Passionnés de football
+                                            {t('homePage.footballFans')}
                                         </li>
                                     </ul>
                                 </div>
@@ -558,7 +525,7 @@ const Home = () => {
                                         <span>
                                             <i className="feather-user-plus me-2" />
                                         </span>
-                                        Rejoignez-nous
+                                        {t('homePage.joinUs')}
                                     </Link>
                                     <Link
                                         to={routes.aboutUs}
@@ -567,7 +534,7 @@ const Home = () => {
                                         <span>
                                             <i className="feather-align-justify me-2" />
                                         </span>
-                                        À propos de nous
+                                        {t('homePage.aboutUsButton')}
                                     </Link>
                                 </div>
                             </div>

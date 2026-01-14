@@ -2,9 +2,11 @@ import React from "react";
 import ImageWithBasePath from "../../core/data/img/ImageWithBasePath";
 import {Link} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
+import {useTranslation} from "react-i18next";
 
 const AboutUs = () => {
     const routes = all_routes;
+    const { t } = useTranslation();
 
     return (
         <div>
@@ -12,12 +14,12 @@ const AboutUs = () => {
             <div className="breadcrumb breadcrumb-list mb-0">
                 <span className="primary-right-round" />
                 <div className="container">
-                    <h1 className="text-white">Qui sommes-nous ?</h1>
+                    <h1 className="text-white">{t('aboutUs.title')}</h1>
                     <ul>
                         <li>
-                            <Link to={routes.home}>Accueil</Link>
+                            <Link to={routes.home}>{t('common.home')}</Link>
                         </li>
-                        <li>Qui sommes-nous ?</li>
+                        <li>{t('aboutUs.breadcrumb')}</li>
                     </ul>
                 </div>
             </div>
@@ -62,23 +64,17 @@ const AboutUs = () => {
                         <div className="vision-mission">
                             <div className="row">
                                 <div className=" col-12 col-sm-12 col-md-12 col-lg-8">
-                                    <h2>Notre Vision</h2>
+                                    <h2>{t('aboutUs.ourVision')}</h2>
                                     <p>
-                                        IDA (Intelligence Data Analytics) est né de la passion pour
-                                        le football et de la conviction que la technologie et les
-                                        données peuvent révolutionner ce sport en Côte
-                                        d&apos;Ivoire.
+                                        {t('aboutUs.visionText1')}
                                     </p>
                                     <p>
-                                        Notre mission est simple : fournir aux clubs, entraîneurs,
-                                        et agents des outils d&apos;analyse avancés pour améliorer
-                                        les performances, identifier les talents, et maximiser les
-                                        opportunités dans le monde du football.
+                                        {t('aboutUs.visionText2')}
                                     </p>
                                 </div>
                                 <div className=" col-12 col-sm-12 col-md-12 col-lg-4">
                                     <div className="mission-bg">
-                                        <h2>Notre Mission</h2>
+                                        <h2>{t('aboutUs.ourMission')}</h2>
                                         <p>
                                             Notre mission est de rendre le football plus accessible,
                                             plus transparent, et plus compétitif grâce à
