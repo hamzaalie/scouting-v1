@@ -217,33 +217,39 @@ const Header = () => {
                                 </React.Fragment>
                             ))}
 
-                            {isUserConnected && isUserConnected?.firstName && (
-                                <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
-                                    <li className="nav-item">
-                                        <Link
-                                            className="nav-link btn-sm btn-secondary"
-                                            to={routes.userBookings}
-                                        >
-                                            <span>
-                                                <i className="feather-menu" />
-                                            </span>
-                                            {t('auth.dashboard')}
-                                        </Link>
-                                    </li>
-                                    <li className="nav-item">
-                                        <div className="nav-link btn-sm btn-white log-register">
-                                            <Link to="" onClick={handleLogout}>
+                            {/* Mobile Menu Items */}
+                            <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
+                                {/* Language Switcher for Mobile */}
+                                <li className="nav-item" style={{ padding: '10px 15px' }}>
+                                    <LanguageSwitcher />
+                                </li>
+                                
+                                {isUserConnected && isUserConnected?.firstName && (
+                                    <>
+                                        <li className="nav-item">
+                                            <Link
+                                                className="nav-link btn-sm btn-secondary"
+                                                to={routes.userBookings}
+                                            >
                                                 <span>
-                                                    <i className="feather-log-out" />
+                                                    <i className="feather-menu" />
                                                 </span>
-                                                {t('auth.logout')}
-                                            </Link>{" "}
-                                        </div>
-                                    </li>
-                                </div>
-                            )}
-                            {!isUserConnected?.firstName && (
-                                <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
+                                                {t('auth.dashboard')}
+                                            </Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <div className="nav-link btn-sm btn-white log-register">
+                                                <Link to="" onClick={handleLogout}>
+                                                    <span>
+                                                        <i className="feather-log-out" />
+                                                    </span>
+                                                    {t('auth.logout')}
+                                                </Link>{" "}
+                                            </div>
+                                        </li>
+                                    </>
+                                )}
+                                {!isUserConnected?.firstName && (
                                     <li className="nav-item">
                                         <Link
                                             className="nav-link btn-sm btn-secondary"
@@ -255,8 +261,8 @@ const Header = () => {
                                             {t('auth.loginSignup')}
                                         </Link>{" "}
                                     </li>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </ul>
                     </div>
                     <ul
