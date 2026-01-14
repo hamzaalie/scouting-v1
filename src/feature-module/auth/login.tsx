@@ -10,6 +10,7 @@ import {urlEndpoint} from "../../helpers/url.helper";
 import {LoginDto} from "../../core/data/interface/auth/login";
 import {toast} from "react-toastify";
 import {paymentService} from "../../helpers/payment.service";
+import {useTranslation} from "react-i18next";
 
 export const handleExternalAuthLogin = (extAuthProvider: "GOOGLE" | "FACEBOOK") => {
     const windowFeatures = "left=100,top=100,width=780,height=320";
@@ -27,6 +28,7 @@ const Login = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const route = all_routes;
+    const { t } = useTranslation();
 
     useEffect(() => {
         //console.log("🚀 ~ Login ~ location:", location);
@@ -50,7 +52,7 @@ const Login = () => {
             // Check if we should redirect to payment
             if (paymentService.shouldRedirectAfterAuth()) {
                 toast.success(
-                    "Connexion réussie. Vous serez redirigé(e) vers la page de paiement.",
+                    t('auth.loginSuccessPayment'),
                     {
                         toastId: "successToast",
                         theme: "colored",
@@ -68,7 +70,7 @@ const Login = () => {
                 }, 3000);
             } else {
                 toast.success(
-                    "Connexion réussie. Vous serez redirigé(e) vers votre tableau de bord.",
+                    t('auth.loginSuccess'),
                     {
                         toastId: "successToast",
                         theme: "colored",
@@ -112,7 +114,7 @@ const Login = () => {
         if (e === "Google") {
             handle = window.open(urlEndpoint.auth.GOOGLE, "_self", windowFeatures);
             if (!handle) {
-                toast.info("Veuilez autoriser le pop-up à s'afficher.", {
+                toast.info(t('auth.allowPopup'), {
                     toastId: "defaultToast",
                     theme: "colored",
                 });
@@ -124,7 +126,7 @@ const Login = () => {
         if (e === "Facebook") {
             handle = window.open(urlEndpoint.auth.FACEBOOK, "_self", windowFeatures);
             if (!handle) {
-                toast.info("Veuilez autoriser le pop-up à s'afficher.", {
+                toast.info(t('auth.allowPopup'), {
                     toastId: "defaultToast",
                     theme: "colored",
                 });
@@ -135,7 +137,7 @@ const Login = () => {
         }
 
         if (state.email.trim().length === 0 || state.password.trim().length === 0) {
-            toast.warn("Veuillez remplir tous les champs s'il vous plaît !", {
+            toast.warn(t('auth.fillAllFields'), {
                 toastId: "defaultToast",
                 theme: "colored",
             });
@@ -143,7 +145,7 @@ const Login = () => {
             return;
         }
         if (!EMAIL_REGEX.test(state.email)) {
-            toast.warn("Veuillez entrer une adresse e-mail s'il vous plaît.", {
+            toast.warn(t('auth.invalidEmail'), {
                 toastId: "defaultToast",
                 theme: "colored",
             });
@@ -164,7 +166,7 @@ const Login = () => {
                 // Check if we need to redirect to payment after login
                 if (paymentService.shouldRedirectAfterAuth()) {
                     toast.success(
-                        "Connexion réussie. Vous serez redirigé(e) vers la page de paiement...",
+                        t('auth.loginSuccessPayment'),
                         {
                             toastId: "defaultToast",
                             theme: "colored",
@@ -179,7 +181,7 @@ const Login = () => {
                     }, 3000);
                 } else {
                     toast.success(
-                        "Connexion réussie. Vous serez redirigé(e) vers votre tableau de bord...",
+                        t('auth.loginSuccess'),
                         {
                             toastId: "defaultToast",
                             theme: "colored",
@@ -258,11 +260,10 @@ const Login = () => {
                                                         className="btn btn-limegreen text-capitalize"
                                                     >
                                                         <i className="fa-solid fa-thumbs-up me-3" />
-                                                        Se connecter
+                                                        {t('auth.signIn')}
                                                     </button>
                                                     <p>
-                                                        Accédez à votre espace et vos différentes
-                                                        données
+                                                        {t('auth.loginSubtitle')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -286,8 +287,8 @@ const Login = () => {
                                                 </Link>
                                             </header>
                                             <div className="shadow-card">
-                                                <h2>Bon retour parmi nous !</h2>
-                                                <p>Connectez-vous à votre compte</p>
+                                                <h2>{t('auth.welcomeBack')}</h2>
+                                                <p>{t('auth.loginSubtitle')}</p>
 
                                                 <div className="tab-content" id="myTabContent">
                                                     <div
@@ -305,7 +306,7 @@ const Login = () => {
                                                                     <input
                                                                         type="text"
                                                                         className="form-control"
-                                                                        placeholder="Adresse e-mail"
+                                                                        placeholder={t('auth.enterEmail')}
                                                                         name="email"
                                                                         value={state.email}
                                                                         onChange={handleChange}
@@ -327,7 +328,7 @@ const Login = () => {
                                                                                 : "password"
                                                                         }
                                                                         className="form-control pass-input"
-                                                                        placeholder="Mot de passe"
+                                                                        placeholder={t('auth.enterPassword')}
                                                                         value={state.password}
                                                                         name="password"
                                                                         onChange={handleChange}
@@ -340,7 +341,7 @@ const Login = () => {
                                                                         to={route.forgotPasssword}
                                                                         className="forgot-pass"
                                                                     >
-                                                                        Mot de passe oublié ?
+                                                                        {t('auth.forgotPassword')}
                                                                     </Link>
                                                                 </span>
                                                             </div>
@@ -353,8 +354,8 @@ const Login = () => {
                                                                 }
                                                             >
                                                                 {loading
-                                                                    ? "Connexion en cours..."
-                                                                    : "Se connecter"}
+                                                                    ? t('common.loading')
+                                                                    : t('auth.signIn')}
                                                                 <i
                                                                     className={
                                                                         loading
@@ -366,7 +367,7 @@ const Login = () => {
                                                             <div className="form-group">
                                                                 <div className="login-options text-center">
                                                                     <span className="text">
-                                                                        Ou continuez avec
+                                                                        {t('auth.orLoginWith')}
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -417,9 +418,9 @@ const Login = () => {
                                             </div>
                                             <div className="bottom-text text-center">
                                                 <p>
-                                                    Vous n&apos;avez pas de compte ?{" "}
+                                                    {t('auth.noAccount')}{" "}
                                                     <Link to={route.register}>
-                                                        Inscrivez-vous !
+                                                        {t('auth.signUp')}
                                                     </Link>
                                                 </p>
                                             </div>

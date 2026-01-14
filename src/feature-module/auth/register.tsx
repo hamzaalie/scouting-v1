@@ -8,10 +8,12 @@ import {backendFunctions} from "../../helpers/backend.helper";
 import {toast} from "react-toastify";
 import {handleExternalAuthLogin} from "./login";
 import {paymentService} from "../../helpers/payment.service";
+import {useTranslation} from "react-i18next";
 
 const Signin = () => {
     const route = all_routes;
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     //Toggle Password
     const [passwordVisible, setPasswordVisible] = useState(false);
