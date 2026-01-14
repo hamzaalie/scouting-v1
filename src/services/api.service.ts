@@ -45,7 +45,7 @@ apiClient.interceptors.response.use(
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           localStorage.removeItem('user');
-          window.location.href = '/auth/login';
+          window.location.href = '/login';
           return Promise.reject(error);
         }
 
@@ -68,7 +68,7 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
-        window.location.href = '/auth/login';
+        window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }
