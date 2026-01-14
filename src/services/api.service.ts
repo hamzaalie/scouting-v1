@@ -41,11 +41,10 @@ apiClient.interceptors.response.use(
         const refreshToken = localStorage.getItem('refresh_token');
         
         if (!refreshToken) {
-          // No refresh token, redirect to login
+          // No refresh token, just clear tokens and let the error propagate
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           localStorage.removeItem('user');
-          window.location.href = '/login';
           return Promise.reject(error);
         }
 
@@ -64,11 +63,10 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, logout user
+        // Refresh failed, clear tokens and let the error propagate
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }
