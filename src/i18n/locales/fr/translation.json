@@ -276,5 +276,26 @@
     "dataAnalysts": "Professionnels de l'analyse de données",
     "footballFans": "Passionnés de football",
     "aboutUsButton": "À propos de nous"
+  },
+  "footer": {
+    "accelerateSuccess": "Accélérez votre Succès",
+    "discoverPower": "Découvrez comment la puissance des données peut transformer le football ivoirien.",
+    "joinUs": "Rejoignez-nous",
+    "contactUs": "Nous contacter",
+    "idaSupport": "Support IDA",
+    "email": "Email",
+    "links": "Liens",
+    "home": "Accueil",
+    "aboutUs": "À propos de nous",
+    "buyPacks": "Achat de Packs",
+    "support": "Support",
+    "faq": "Foire aux questions",
+    "privacyPolicy": "Politique de Confidentialité",
+    "termsConditions": "Termes & Conditions",
+    "cookiesPolicy": "Politique des cookies",
+    "dashboard": "Dashboard",
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "allRightsReserved": "Tous droits reservés."
   }
 }

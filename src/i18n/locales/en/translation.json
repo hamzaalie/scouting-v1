@@ -276,5 +276,26 @@
     "dataAnalysts": "Data Analysis Professionals",
     "footballFans": "Football Enthusiasts",
     "aboutUsButton": "About Us"
+  },
+  "footer": {
+    "accelerateSuccess": "Accelerate Your Success",
+    "discoverPower": "Discover how the power of data can transform Ivorian football.",
+    "joinUs": "Join Us",
+    "contactUs": "Contact Us",
+    "idaSupport": "IDA Support",
+    "email": "Email",
+    "links": "Links",
+    "home": "Home",
+    "aboutUs": "About Us",
+    "buyPacks": "Buy Packs",
+    "support": "Support",
+    "faq": "FAQ",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "cookiesPolicy": "Cookies Policy",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "allRightsReserved": "All rights reserved."
   }
 }
