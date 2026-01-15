@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import {Link, useNavigate} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
 import {tPack} from "../../types/pack.type";
-import {subscriptionsAPI} from "../../services/api.service";
+import {backendFunctions} from "../../helpers/backend.helper";
 import {InputSwitch} from "primereact/inputswitch";
 import {formatPrice} from "../../helpers/input.helper";
 import {paymentService} from "../../helpers/payment.service";
@@ -82,37 +82,38 @@ const Home = () => {
     const [packsToDisplay, setPacksToDisplay] = useState<Array<tPack>>([]);
 
     useEffect(() => {
-        //Query - Fetch from new subscriptions API
-        subscriptionsAPI
-            .getPlans()
+        //Query
+        backendFunctions.packs
+            .getAllPacks()
             .then((response) => {
-                // Convert new API format to old pack format  
-                // Set all plans to match current filters so they always display
-                const convertedPacks: Array<tPack> = response.map((plan: any) => ({
-                    _id: plan.id,
-                    name: plan.name,
-                    price: plan.price,
-                    period: periodChecked.mode, // Match current period
-                    option: countryModechecked.mode, // Match current option
-                    features: plan.features || [],
-                    description: plan.description || ''
-                }));
-                
-                setAllPacks(convertedPacks);
-                setPacksToDisplay(convertedPacks.sort((a, b) => a.price - b.price));
+                //console.log("🚀 ~ .then ~ response:", response);
+                setAllPacks(response);
+                setPacksToDisplay(
+                    response.filter(
+                        (pack: tPack) =>
+                            pack.option === countryModechecked.mode &&
+                            pack.period === periodChecked.mode
+                    )
+                );
             })
             .catch((error) => {
-                console.log("Error fetching subscription plans:", error);
+                //console.log("🚀 ~ Pricing ~ error:", error);
                 setAllPacks([]);
             });
     }, []);
 
     useEffect(() => {
-        // Just show all plans sorted by price, ignore filters since new API doesn't have period/option
         setPacksToDisplay(
-            allPacks.sort((a, b) => a.price - b.price)
+            allPacks
+                .sort((a, b) => a.price - b.price)
+                .filter(
+                    (pack) =>
+                        pack.option === countryModechecked.mode &&
+                        pack.period === periodChecked.mode
+                )
         );
-    }, [countryModechecked, periodChecked, allPacks]);
+        //console.log("🚀 ~ Pricing in useEffect ~ packsToDisplay:", packsToDisplay);
+    }, [countryModechecked, periodChecked]);
 
     //console.log("🚀 ~ Pricing ~ packsToDisplay:", packsToDisplay);
 
