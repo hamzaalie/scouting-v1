@@ -1,11 +1,9 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {useTranslation} from "react-i18next";
 
 const TermsCondition = () => {
     const route = all_routes;
-    const {t} = useTranslation();
     return (
         <>
             <div className="main-wrapper terms-page innerpagebg">
@@ -13,12 +11,12 @@ const TermsCondition = () => {
                 <div className="breadcrumb breadcrumb-list mb-0">
                     <span className="primary-right-round" />
                     <div className="container">
-                        <h1 className="text-white">{t('termsConditions.title')}</h1>
+                        <h1 className="text-white">Termes &amp; Conditions</h1>
                         <ul>
                             <li>
-                                <Link to={route.home}>{t('termsConditions.breadcrumbHome')}</Link>
+                                <Link to={route.home}>Accueil</Link>
                             </li>
-                            <li>{t('termsConditions.breadcrumb')}</li>
+                            <li>Termes &amp; Conditions</li>
                         </ul>
                     </div>
                 </div>
@@ -26,176 +24,93 @@ const TermsCondition = () => {
                 {/* Page Content */}
                 <div className="content">
                     <div className="container">
+                        <ol type="I" className="fs-4 text-primary fw-bold">
+                            <li>Définitions et interprétation</li>
+                        </ol>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                            velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                            occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            mollit anim id est laborum.
+                        </p>
+                        <p>
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+                            illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+                            explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
+                            odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
+                            voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum
+                            quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam
+                            eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat
+                            voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam
+                            corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
+                            Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
+                            quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo
+                            voluptas nulla pariatur?
+                        </p>
+                        <p>
+                            At vero eos et accusamus et iusto odio dignissimos ducimus qui
+                            blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+                            et quas molestias excepturi sint occaecati cupiditate non provident,
+                            similique sunt in culpa qui officia deserunt mollitia animi, id est
+                            laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita
+                            distinctio. Nam libero tempore, cum soluta nobis est eligendi optio
+                            cumque nihil impedit quo minus id quod maxime placeat facere possimus,
+                            omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem
+                            quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet
+                            ut et voluptates repudiandae sint et molestiae non recusandae. Itaque
+                            earum rerum hic tenetur a sapiente delectus, ut aut reiciendis
+                            voluptatibus maiores alias consequatur aut perferendis doloribus
+                            asperiores repellat.
+                        </p>
+                        {/* <h3>Policy Name</h3>
                         <div className="row">
-                            <div className="col-12">
+                            <div className="col-12 col-sm-12 col-md-6">
                                 <div className="condition-details">
-                                    {/* Header */}
-                                    <div className="text-center mb-5">
-                                        <h2 className="text-primary mb-3">{t('termsConditions.title')}</h2>
-                                        <h4 className="text-secondary mb-2">{t('termsConditions.subtitle')}</h4>
-                                        <p className="text-muted mb-1">{t('termsConditions.publishedBy')}</p>
-                                        <p className="text-muted"><em>{t('termsConditions.version')}</em></p>
-                                    </div>
-
-                                    {/* Legal Information */}
-                                    <div className="mb-5 bg-light p-4 rounded">
-                                        <h3 className="text-primary mb-4">{t('termsConditions.legalTitle')}</h3>
-                                        
-                                        <h5 className="fw-bold mb-3">{t('termsConditions.editorTitle')}</h5>
-                                        <p className="mb-4">{t('termsConditions.editorText')}</p>
-                                        
-                                        <h6 className="fw-bold text-secondary mb-3">{t('termsConditions.identificationTitle')}</h6>
-                                        <ul className="list-unstyled ps-3">
-                                            <li className="mb-2"><i className="feather-chevron-right text-primary me-2"></i>{t('termsConditions.companyName')}</li>
-                                            <li className="mb-2"><i className="feather-chevron-right text-primary me-2"></i>{t('termsConditions.headquarters')}</li>
-                                            <li className="mb-2"><i className="feather-chevron-right text-primary me-2"></i>{t('termsConditions.postalAddress')}</li>
-                                            <li className="mb-2"><i className="feather-chevron-right text-primary me-2"></i>{t('termsConditions.phone')}</li>
-                                            <li className="mb-2"><i className="feather-chevron-right text-primary me-2"></i>{t('termsConditions.taxInfo')}</li>
-                                            <li className="mb-2"><i className="feather-chevron-right text-primary me-2"></i>{t('termsConditions.rccm')}</li>
-                                        </ul>
-                                        
-                                        <p className="text-muted fst-italic mb-3"><small>{t('termsConditions.additionalRefs')}</small></p>
-                                        <div className="alert alert-warning mb-4">
-                                            <i className="feather-alert-triangle me-2"></i>{t('termsConditions.importantNote')}
-                                        </div>
-                                        
-                                        <p className="mb-4">{t('termsConditions.publicationDirector')}</p>
-                                        
-                                        <h6 className="fw-bold text-secondary mb-3">{t('termsConditions.contactTitle')}</h6>
-                                        <p className="mb-2">{t('termsConditions.supportClaims')}</p>
-                                        <p className="mb-4">{t('termsConditions.websiteApp')}</p>
-                                        
-                                        <h6 className="fw-bold text-secondary mb-3">{t('termsConditions.hostingTitle')}</h6>
-                                        <p className="mb-2">{t('termsConditions.hostingText')}</p>
-                                        <p className="text-muted"><small>{t('termsConditions.hostingNote')}</small></p>
-                                    </div>
-
-                                    {/* Section 1 */}
-                                    <div className="mb-4">
-                                        <h4 className="text-primary mb-3">{t('termsConditions.section1Title')}</h4>
-                                        <p>{t('termsConditions.section1Text')}</p>
-                                    </div>
-
-                                    {/* Section 2 - Definitions */}
-                                    <div className="mb-4">
-                                        <h4 className="text-primary mb-3">{t('termsConditions.section2Title')}</h4>
-                                        <ul className="list-unstyled ps-3">
-                                            <li className="mb-2">• {t('termsConditions.section2Service')}</li>
-                                            <li className="mb-2">• {t('termsConditions.section2User')}</li>
-                                            <li className="mb-2">• {t('termsConditions.section2Account')}</li>
-                                            <li className="mb-2">• {t('termsConditions.section2Content')}</li>
-                                            <li className="mb-2">• {t('termsConditions.section2SportsData')}</li>
-                                            <li className="mb-2">• {t('termsConditions.section2Videos')}</li>
-                                            <li className="mb-2">• {t('termsConditions.section2Offer')}</li>
-                                        </ul>
-                                    </div>
-
-                                    {/* Section 3 - Service Description */}
-                                    <div className="mb-4">
-                                        <h4 className="text-primary mb-3">{t('termsConditions.section3Title')}</h4>
-                                        <p className="mb-3">{t('termsConditions.section3Intro')}</p>
-                                        <ul className="list-unstyled ps-3">
-                                            <li className="mb-2">{t('termsConditions.section3Item1')}</li>
-                                            <li className="mb-2">{t('termsConditions.section3Item2')}</li>
-                                            <li className="mb-2">{t('termsConditions.section3Item3')}</li>
-                                            <li className="mb-2">{t('termsConditions.section3Item4')}</li>
-                                            <li className="mb-2">{t('termsConditions.section3Item5')}</li>
-                                        </ul>
-                                        <p className="text-muted mt-3"><em>{t('termsConditions.section3Note')}</em></p>
-                                    </div>
-
-                                    {/* Section 4 - Account Access */}
-                                    <div className="mb-4">
-                                        <h4 className="text-primary mb-3">{t('termsConditions.section4Title')}</h4>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section4_1Title')}</p>
-                                        <p className="mb-3">{t('termsConditions.section4_1Text')}</p>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section4_2Title')}</p>
-                                        <p className="mb-3">{t('termsConditions.section4_2Text')}</p>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section4_3Title')}</p>
-                                        <p className="mb-3">{t('termsConditions.section4_3Text')}</p>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section4_4Title')}</p>
-                                        <p>{t('termsConditions.section4_4Text')}</p>
-                                    </div>
-
-                                    {/* Section 5 - B2B/B2C Conditions */}
-                                    <div className="mb-4">
-                                        <h4 className="text-primary mb-3">{t('termsConditions.section5Title')}</h4>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section5_1Title')}</p>
-                                        <p className="mb-3">{t('termsConditions.section5_1Text')}</p>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section5_2Title')}</p>
-                                        <p className="mb-3">{t('termsConditions.section5_2Text')}</p>
-                                        <p className="fw-bold mb-2">{t('termsConditions.section5_3Title')}</p>
-                                        <p>{t('termsConditions.section5_3Text')}</p>
-                                    </div>
-
-                                    {/* Continue with remaining sections... */}
-                                    {/* I'll create a pattern for the remaining sections */}
-                                    
-                                    {[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23].map((num) => (
-                                        <div key={num} className="mb-4">
-                                            <h4 className="text-primary mb-3">{t(`termsConditions.section${num}Title`)}</h4>
-                                            {/* Section 6 subsections */}
-                                            {num === 6 && (
-                                                <>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section6_1Title')}</p>
-                                                    <p className="mb-3">{t('termsConditions.section6_1Text')}</p>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section6_2Title')}</p>
-                                                    <p className="mb-3">{t('termsConditions.section6_2Text')}</p>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section6_3Title')}</p>
-                                                    <p className="mb-3">{t('termsConditions.section6_3Text')}</p>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section6_4Title')}</p>
-                                                    <p>{t('termsConditions.section6_4Text')}</p>
-                                                </>
-                                            )}
-                                            {/* Section 7 */}
-                                            {num === 7 && <p>{t('termsConditions.section7Text')}</p>}
-                                            {/* Section 8 */}
-                                            {num === 8 && (
-                                                <>
-                                                    <p className="mb-3">{t('termsConditions.section8Intro')}</p>
-                                                    <ul className="list-unstyled ps-3">
-                                                        <li className="mb-2">{t('termsConditions.section8Item1')}</li>
-                                                        <li className="mb-2">{t('termsConditions.section8Item2')}</li>
-                                                        <li className="mb-2">{t('termsConditions.section8Item3')}</li>
-                                                        <li className="mb-2">{t('termsConditions.section8Item4')}</li>
-                                                        <li className="mb-2">{t('termsConditions.section8Item5')}</li>
-                                                    </ul>
-                                                    <p className="text-muted mt-3"><em>{t('termsConditions.section8Note')}</em></p>
-                                                </>
-                                            )}
-                                            {/* Sections 9, 10, 11, 13, 17, 18, 20 with subsections */}
-                                            {[9, 10, 11, 13, 17, 18, 20].includes(num) && (
-                                                <>
-                                                    {[1, 2, 3].map(sub => {
-                                                        const titleKey = `termsConditions.section${num}_${sub}Title`;
-                                                        const textKey = `termsConditions.section${num}_${sub}Text`;
-                                                        return (
-                                                            <div key={sub}>
-                                                                <p className="fw-bold mb-2">{t(titleKey)}</p>
-                                                                <p className="mb-3">{t(textKey)}</p>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </>
-                                            )}
-                                            {/* Sections 15 with subsections */}
-                                            {num === 15 && (
-                                                <>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section15_1Title')}</p>
-                                                    <p className="mb-3">{t('termsConditions.section15_1Text')}</p>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section15_2Title')}</p>
-                                                    <p className="mb-3">{t('termsConditions.section15_2Text')}</p>
-                                                    <p className="fw-bold mb-2">{t('termsConditions.section15_3Title')}</p>
-                                                    <p>{t('termsConditions.section15_3Text')}</p>
-                                                </>
-                                            )}
-                                            {/* Simple text sections */}
-                                            {[12, 14, 16, 19, 21, 22, 23].includes(num) && <p>{t(`termsConditions.section${num}Text`)}</p>}
-                                        </div>
-                                    ))}
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                                        do eiusmod tempor incididunt ut labore et dolore magna
+                                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                        ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                        Duis aute irure dolor in reprehenderit in voluptate velit
+                                        esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                                        occaecat cupidatat non proident, sunt in culpa qui officia
+                                        deserunt mollit anim id est laborum.
+                                    </p>
+                                    <p>
+                                        Sed ut perspiciatis unde omnis iste natus error sit
+                                        voluptatem accusantium doloremque laudantium, totam rem
+                                        aperiam, eaque ipsa quae ab illo inventore veritatis et
+                                        quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                                        enim ipsam voluptatem quia voluptas
+                                    </p>
                                 </div>
                             </div>
-                        </div>
+                            <div className="col-12 col-sm-12 col-md-6">
+                                <div className="condition-details">
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                                        do eiusmod tempor incididunt ut labore et dolore magna
+                                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                        ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                        Duis aute irure dolor in reprehenderit in voluptate velit
+                                        esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                                        occaecat cupidatat non proident, sunt in culpa qui officia
+                                        deserunt mollit anim id est{" "}
+                                    </p>
+                                    <p>
+                                        Sed ut perspiciatis unde omnis iste natus error sit
+                                        voluptatem accusantium doloremque laudantium, totam rem
+                                        aperiam, eaque ipsa quae ab illo inventore veritatis et
+                                        quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                                        enim ipsam voluptatem quia voluptas
+                                    </p>
+                                </div>
+                            </div>
+                        </div> */}
                     </div>
                 </div>
                 {/* /Page Content */}

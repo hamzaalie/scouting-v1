@@ -1,8 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
-// Default to production API if env is not provided
-const API_BASE_URL =
-  process.env.REACT_APP_BACKEND_URL || 'https://api.idasports.io/api';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -41,10 +39,11 @@ apiClient.interceptors.response.use(
         const refreshToken = localStorage.getItem('refresh_token');
         
         if (!refreshToken) {
-          // No refresh token, just clear tokens and let the error propagate
+          // No refresh token, redirect to login
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           localStorage.removeItem('user');
+          window.location.href = '/auth/login';
           return Promise.reject(error);
         }
 
@@ -63,10 +62,11 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, clear tokens and let the error propagate
+        // Refresh failed, logout user
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
+        window.location.href = '/auth/login';
         return Promise.reject(refreshError);
       }
     }

@@ -7,205 +7,113 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {Link, useNavigate} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {subscriptionsAPI, paymentsAPI} from "../../services/api.service";
+import {tPack} from "../../types/pack.type";
+import {backendFunctions} from "../../helpers/backend.helper";
+import {InputSwitch} from "primereact/inputswitch";
+import {formatPrice} from "../../helpers/input.helper";
+import {paymentService} from "../../helpers/payment.service";
+import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {toast} from "react-toastify";
-import {useTranslation} from "react-i18next";
-
-interface SubscriptionPlan {
-    id: string;
-    name: string;
-    price: number;
-    currency: string;
-    duration: number;
-    features: string[];
-}
 
 const Home = () => {
     const routes = all_routes;
     const navigate = useNavigate();
-    const { t } = useTranslation();
+
+    //Handle Switch
+    const [countryModechecked, setCountryModeChecked] = useState({
+        checked: false,
+        mode: "local",
+    });
+    const [periodChecked, setPeriodChecked] = useState({
+        checked: false,
+        mode: "mois",
+    });
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [processingPayment, setProcessingPayment] = useState(false);
-    const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-    const [currentSubscription, setCurrentSubscription] = useState<{ status: string; expires_at: string } | null>(null);
 
-    // Subscription plans
-    const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
-    const [displayedPlans, setDisplayedPlans] = useState<SubscriptionPlan[]>([]);
+    const handleSwitchCountry = () => {
+        setCountryModeChecked((prev) => ({
+            ...prev,
+            checked: !prev.checked,
+            mode: prev.mode === "local" ? "international" : "local",
+        }));
+    };
+
+    const handleSwitchPeriod = () => {
+        setPeriodChecked((prev) => ({
+            ...prev,
+            checked: !prev.checked,
+            mode: prev.mode === "mois" ? "année" : "mois",
+        }));
+    };
+
+    const handleChoicePack = (chosenPack: tPack) => {
+        // Prevent multiple clicks
+        if (loading) return;
+        setLoading(true);
+
+        // Use our payment service to handle the flow
+        //! TODO : Change price to real one after all test period
+        const redirectUrl = paymentService.initiatePaymentProcess({...chosenPack, price: 100});
+
+        if (localStorageFunctions.isUserLoggedIn()) {
+            // User is logged in, show success toast and redirect to payment
+            toast.success("Vous serez redirigé(e) vers la page de paiement...", {
+                toastId: "redirectToast",
+                theme: "colored",
+            });
+            setTimeout(() => {
+                //! TODO : Change price to real one after all test period
+                navigate(redirectUrl, {state: {...chosenPack, price: 100}});
+                setLoading(false);
+            }, 1500);
+        } else {
+            // User is not logged in, redirect to login page
+            // The toast is already shown by the paymentService
+            setTimeout(() => {
+                navigate(redirectUrl);
+                setLoading(false);
+            }, 1000);
+        }
+    };
+
+    //All Packs fetched
+    const [allPacks, setAllPacks] = useState<Array<tPack>>([]);
+    const [packsToDisplay, setPacksToDisplay] = useState<Array<tPack>>([]);
 
     useEffect(() => {
-        // Fetch subscription plans
-        const fetchPlans = async () => {
-            try {
-                setLoading(true);
-                const response = await subscriptionsAPI.getPlans();
-                setPlans(response.plans);
-                setDisplayedPlans(response.plans);
-            } catch (error) {
-                console.error('Error fetching plans:', error);
-                toast.error('Failed to load subscription plans');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPlans();
-        fetchCurrentSubscription();
+        //Query
+        backendFunctions.packs
+            .getAllPacks()
+            .then((response) => {
+                //console.log("🚀 ~ .then ~ response:", response);
+                setAllPacks(response);
+                setPacksToDisplay(
+                    response.filter(
+                        (pack: tPack) =>
+                            pack.option === countryModechecked.mode &&
+                            pack.period === periodChecked.mode
+                    )
+                );
+            })
+            .catch((error) => {
+                //console.log("🚀 ~ Pricing ~ error:", error);
+                setAllPacks([]);
+            });
     }, []);
 
-    const fetchCurrentSubscription = async () => {
-        try {
-            const response = await subscriptionsAPI.getStatus();
-            setCurrentSubscription(response);
-        } catch (error) {
-            console.log('No current subscription');
-        }
-    };
-
-    const handleSubscribe = async (plan: SubscriptionPlan) => {
-        // Check if user is logged in
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            toast.info(t('common.pleaseLoginFirst') || 'Please login first to subscribe');
-            navigate(routes.login);
-            return;
-        }
-
-        try {
-            setProcessingPayment(true);
-            setSelectedPlan(plan.id);
-
-            // Initiate payment
-            const paymentData = await paymentsAPI.initiate(plan.id, plan.price);
-
-            toast.success('Redirecting to payment gateway...');
-            
-            // Redirect to CinetPay checkout
-            redirectToCinetPay(paymentData);
-
-        } catch (error) {
-            console.error('Payment error:', error);
-            toast.error('Payment initiation failed');
-            setProcessingPayment(false);
-            setSelectedPlan(null);
-        }
-    };
-
-    const handleTestModeSubscribe = async (plan: SubscriptionPlan) => {
-        // Check if user is logged in
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            toast.info(t('common.pleaseLoginFirst') || 'Please login first to subscribe');
-            navigate(routes.login);
-            return;
-        }
-
-        try {
-            setProcessingPayment(true);
-            setSelectedPlan(plan.id);
-
-            // Initiate payment
-            const paymentData = await paymentsAPI.initiate(plan.id, plan.price);
-
-            toast.info('🧪 TEST MODE: Simulating successful payment...', { autoClose: 2000 });
-            
-            // Call test webhook to complete payment
-            setTimeout(async () => {
-                try {
-                    const response = await fetch(
-                        `http://localhost:3000/api/webhooks/test-payment-success?transaction_id=${paymentData.transactionId}`
-                    );
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        toast.success('✅ Test payment completed! Redirecting...');
-                        setTimeout(() => {
-                            window.location.href = '/payment/success?transaction_id=' + paymentData.transactionId;
-                        }, 1500);
-                    } else {
-                        throw new Error(result.error || 'Test payment failed');
-                    }
-                } catch (error) {
-                    console.error('Test payment error:', error);
-                    toast.error('Test payment failed');
-                    setProcessingPayment(false);
-                    setSelectedPlan(null);
-                }
-            }, 2000);
-
-        } catch (error) {
-            console.error('Payment error:', error);
-            toast.error('Payment initiation failed');
-            setProcessingPayment(false);
-            setSelectedPlan(null);
-        }
-    };
-
-    const redirectToCinetPay = (paymentData: {
-        transactionId: string;
-        amount: number;
-        plan: string;
-        user: { email: string; id: string };
-        cinetpayConfig: {
-            apikey: string;
-            site_id: string;
-            notify_url: string;
-            return_url: string;
-            cancel_url: string;
-        };
-    }) => {
-        const { transactionId, amount, plan, user, cinetpayConfig } = paymentData;
-
-        // CinetPay Seamless Integration
-        const win = window as Window & { CinetPay?: { setConfig: (config: Record<string, string>) => void; getCheckout: (data: Record<string, unknown>) => void; waitResponse: (callback: (data: { status: string }) => void) => void; onError: (callback: (data: { message?: string }) => void) => void } };
-        if (typeof win.CinetPay !== 'undefined') {
-            win.CinetPay.setConfig({
-                apikey: cinetpayConfig.apikey,
-                site_id: cinetpayConfig.site_id,
-                notify_url: cinetpayConfig.notify_url,
-                mode: 'PRODUCTION'
-            });
-
-            win.CinetPay.getCheckout({
-                transaction_id: transactionId,
-                amount: amount,
-                currency: 'XOF',
-                channels: 'ALL',
-                description: `Subscription ${plan}`,
-                customer_name: user.email.split('@')[0],
-                customer_surname: user.email.split('@')[0],
-                customer_email: user.email,
-                customer_phone_number: '0000000000',
-                customer_address: 'N/A',
-                customer_city: 'Abidjan',
-                customer_country: 'CI',
-                customer_state: 'CI',
-                customer_zip_code: '00000',
-            });
-
-            win.CinetPay.waitResponse((data) => {
-                if (data.status === 'REFUSED') {
-                    toast.error('Payment was refused');
-                    setProcessingPayment(false);
-                    setSelectedPlan(null);
-                } else if (data.status === 'ACCEPTED') {
-                    toast.success('Payment successful!');
-                    window.location.href = cinetpayConfig.return_url + '?transaction_id=' + transactionId;
-                }
-            });
-
-            win.CinetPay.onError((data) => {
-                console.error('CinetPay Error:', data);
-                toast.error('Payment error: ' + (data.message || 'Unknown error'));
-                setProcessingPayment(false);
-                setSelectedPlan(null);
-            });
-        } else {
-            toast.error('Payment system not loaded. Please refresh the page.');
-            setProcessingPayment(false);
-            setSelectedPlan(null);
-        }
-    };
+    useEffect(() => {
+        setPacksToDisplay(
+            allPacks
+                .sort((a, b) => a.price - b.price)
+                .filter(
+                    (pack) =>
+                        pack.option === countryModechecked.mode &&
+                        pack.period === periodChecked.mode
+                )
+        );
+        //console.log("🚀 ~ Pricing in useEffect ~ packsToDisplay:", packsToDisplay);
+    }, [countryModechecked, periodChecked]);
 
     //console.log("🚀 ~ Pricing ~ packsToDisplay:", packsToDisplay);
 
@@ -230,14 +138,16 @@ const Home = () => {
                             <div className="col-lg-7 col-md-10 mx-auto">
                                 <div className="section-search aos" data-aos="fade-up">
                                     <h1>
-                                        {t('homePage.heroTitle')}{" "}
+                                        Bienvenue{" "}
                                         <span style={{textTransform: "lowercase", color: "#fff"}}>
-                                            {t('homePage.heroTitleOn')}
+                                            sur
                                         </span>{" "}
-                                        <span>{t('homePage.heroTitleIDA')}</span>, {t('homePage.heroTitleFull')}
+                                        <span>IDA</span>, Intelligence Data Analytics
                                     </h1>
                                     <p className="sub-info">
-                                        {t('homePage.heroSubtitle')}
+                                        Nous redéfinissons l&apos;avenir du football en Côte
+                                        d&apos;Ivoire grâce à l&apos;exploitation des données
+                                        sportives avancées.
                                     </p>
                                 </div>
                             </div>
@@ -259,9 +169,12 @@ const Home = () => {
             <section className="section work-section">
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
-                        <h2 dangerouslySetInnerHTML={{ __html: t('homePage.briefTitle') }} />
+                        <h2>
+                            En <span>bref...</span>
+                        </h2>
                         <p className="sub-title">
-                            {t('homePage.briefSubtitle')}
+                            Notre projet se concentre sur la collecte et l&apos;analyse de données
+                            précises et détaillées, directement issues des matchs.
                         </p>
                     </div>
                     <div className="row justify-content-center ">
@@ -277,10 +190,16 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>{t('homePage.feature1Title')}</Link>
+                                        <Link to={"#"}>Une technologie puissante</Link>
                                     </h5>
                                     <p>
-                                        {t('homePage.feature1Text')}
+                                        Nous utilisons les dernières technologies de caméras IA pour
+                                        capturer chaque instant du jeu, permettant une analyse
+                                        approfondie des performances des joueurs et des équipes.{" "}
+                                        <br />
+                                        Ces outils innovants offrent une vue d&apos;ensemble unique,
+                                        capturant des angles impossibles à obtenir par les moyens
+                                        traditionnels.
                                     </p>
                                 </div>
                             </div>
@@ -297,13 +216,17 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>{t('homePage.feature2Title')}</Link>
+                                        <Link to={"#"}> Des performances optimales obtenues</Link>
                                     </h5>
                                     <p>
-                                        {t('homePage.feature2Text')}
+                                        Nos équipes d&apos;experts transforment ces données en
+                                        informations exploitables, offrant aux clubs, entraîneurs,
+                                        et agents des insights précis pour améliorer les stratégies
+                                        de jeu, optimiser les performances des joueurs, et
+                                        identifier les talents prometteurs.
                                         <br />
                                         <span style={{color: "#74aef5"}} className="fw-bold">
-                                            {t('homePage.feature2Highlight')}
+                                            Avec IDA, chaque détail compte.
                                         </span>
                                     </p>
                                 </div>
@@ -321,15 +244,19 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>{t('homePage.feature3Title')}</Link>
+                                        <Link to={"#"}>Un succès accéléré</Link>
                                     </h5>
                                     <p>
-                                        {t('homePage.feature3Text')} <br />
+                                        Que vous soyez un club à la recherche d&apos;un avantage
+                                        compétitif, un agent souhaitant repérer le prochain grand
+                                        talent, ou un passionné du football désireux de comprendre
+                                        le jeu sous un nouvel angle, <br />
                                         <span style={{color: "#74aef5"}} className="fw-bold">
-                                            {t('homePage.feature3Highlight')}
+                                            IDA est votre partenaire idéal.
                                         </span>{" "}
                                         <br />
-                                        {t('homePage.feature3Text2')}
+                                        Découvrez comment la puissance des données peut transformer
+                                        le football ivoirien.
                                     </p>
                                 </div>
                             </div>
@@ -342,9 +269,13 @@ const Home = () => {
             <section className="section journey-section">
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
-                        <h2 dangerouslySetInnerHTML={{ __html: t('homePage.whatIsIDATitle') }} />
+                        <h2>
+                            Qu&apos;est-ce-que <span>IDA</span> ?
+                        </h2>
                         <p className="sub-title">
-                            {t('homePage.whatIsIDASubtitle')}
+                            IDA est un projet innovant dédié à la collecte, l&apos;analyse, et
+                            l&apos;exploitation des données sportives en Côte d&apos;Ivoire,
+                            principalement dans le football
                         </p>
                     </div>
                     <div className="row">
@@ -361,9 +292,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.expertise}>{t('homePage.ourExpertise')}</Link>
+                                        <Link to={routes.expertise}>Notre Expertise</Link>
                                     </h4>
-                                    <Link to={routes.expertise}>{t('homePage.seeMore')}</Link>
+                                    <Link to={routes.expertise}>Voir plus</Link>
                                 </div>
                             </div>
                         </div>
@@ -380,9 +311,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.mission}>{t('homePage.ourMission')}</Link>
+                                        <Link to={routes.mission}>Notre Mission</Link>
                                     </h4>
-                                    <Link to={routes.mission}>{t('homePage.seeMore')}</Link>
+                                    <Link to={routes.mission}>Voir plus</Link>
                                 </div>
                             </div>
                         </div>
@@ -399,9 +330,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.whyIDA}>{t('homePage.whyIDA')}</Link>
+                                        <Link to={routes.whyIDA}>Pourquoi IDA ?</Link>
                                     </h4>
-                                    <Link to={routes.whyIDA}>{t('homePage.seeMore')}</Link>
+                                    <Link to={routes.whyIDA}>Voir plus</Link>
                                 </div>
                             </div>
                         </div>
@@ -418,9 +349,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.team}>{t('homePage.ourTeam')}</Link>
+                                        <Link to={routes.team}>Notre Équipe</Link>
                                     </h4>
-                                    <Link to={routes.team}>{t('homePage.seeMore')}</Link>
+                                    <Link to={routes.team}>Voir plus</Link>
                                 </div>
                             </div>
                         </div>
@@ -430,7 +361,7 @@ const Home = () => {
                             to={routes.aboutUs}
                             className="btn btn-secondary d-inline-flex align-items-center"
                         >
-                            {t('homePage.aboutUsLink')}{" "}
+                            Qui sommes-nous ?{" "}
                             <span className="lh-1">
                                 <i className="feather-arrow-right-circle ms-2" />
                             </span>
@@ -444,9 +375,11 @@ const Home = () => {
             <section className="section convenient-section">
                 <div className="container">
                     <div className="convenient-content aos" data-aos="fade-up">
-                        <h2>{t('homePage.visionTitle')}</h2>
+                        <h2>Une Vision pour Transformer le Football en Côte d&apos;Ivoire</h2>
                         <p>
-                            {t('homePage.visionText')}
+                            Ensemble, nous partageons une vision commune : élever le football en
+                            Côte d&apos;Ivoire à un nouveau niveau grâce à l&apos;innovation et aux
+                            données.
                         </p>
                     </div>
                     <div className="convenient-btns aos" data-aos="fade-up">
@@ -454,7 +387,7 @@ const Home = () => {
                             to={routes.register}
                             className="btn btn-primary d-inline-flex align-items-center"
                         >
-                            {t('homePage.joinUs')}{" "}
+                            Rejoignez-nous{" "}
                             <span className="lh-1">
                                 <i className="feather-arrow-right-circle ms-2" />
                             </span>
@@ -463,7 +396,7 @@ const Home = () => {
                             to={routes.pricing}
                             className="btn btn-secondary d-inline-flex align-items-center"
                         >
-                            {t('homePage.pricingPlans')}{" "}
+                            Plans des packs{" "}
                             <span className="lh-1">
                                 <i className="feather-arrow-right-circle ms-2" />
                             </span>
@@ -479,41 +412,49 @@ const Home = () => {
                     <div className="row">
                         <div className="col-lg-6 d-flex align-items-center">
                             <div className="start-your-journey aos" data-aos="fade-up">
-                                <h2 dangerouslySetInnerHTML={{ __html: t('homePage.joinAdventureTitle') }} />
+                                <h2>
+                                    Rejoignez-nous dans cette aventure{" "}
+                                    <span className="active-sport">IDA</span> aujourd&apos;hui.
+                                </h2>
                                 <p>
-                                    {t('homePage.joinAdventureText1')}
+                                    Explorez notre site pour en savoir plus sur nos services, nos
+                                    solutions technologiques, et comment nous pouvons collaborer
+                                    pour élever le football en Côte d&apos;Ivoire à un niveau
+                                    supérieur
                                 </p>
                                 <p>
-                                    {t('homePage.joinAdventureText2')}
+                                    Ensemble, nous pouvons créer un écosystème où les données et la
+                                    technologie permettent de repousser les limites du possible dans
+                                    le football ivoirien.
                                 </p>
-                                <span className="stay-approach">{t('homePage.weInvite')} </span>
+                                <span className="stay-approach">Nous invitons les : </span>
                                 <div className="journey-list">
                                     <ul>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            {t('homePage.clubs')}
+                                            Clubs
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            {t('homePage.coaches')}
+                                            Entraîneurs
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            {t('homePage.agents')}
+                                            Agents
                                         </li>
                                     </ul>
                                     <ul>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            {t('homePage.techSpecialists')}
+                                            Spécialistes en technologie
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            {t('homePage.dataAnalysts')}
+                                            Professionnels de l&apos;analyse de données
                                         </li>
                                         <li>
                                             <i className="fa-solid fa-circle-check" />
-                                            {t('homePage.footballFans')}
+                                            Passionnés de football
                                         </li>
                                     </ul>
                                 </div>
@@ -525,7 +466,7 @@ const Home = () => {
                                         <span>
                                             <i className="feather-user-plus me-2" />
                                         </span>
-                                        {t('homePage.joinUs')}
+                                        Rejoignez-nous
                                     </Link>
                                     <Link
                                         to={routes.aboutUs}
@@ -534,7 +475,7 @@ const Home = () => {
                                         <span>
                                             <i className="feather-align-justify me-2" />
                                         </span>
-                                        {t('homePage.aboutUsButton')}
+                                        À propos de nous
                                     </Link>
                                 </div>
                             </div>
@@ -565,34 +506,38 @@ const Home = () => {
                 </div>
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
-                        <h2 dangerouslySetInnerHTML={{ __html: t('pricing.greatPacksTitle') }} />
+                        <h2>
+                            Nous avons de <span>super Packs pour vous</span>
+                        </h2>
                         <p className="sub-title">
-                            {t('pricing.customServices')}
+                            Nous proposons des services sur mesure en fonction de vos besoins
+                            spécifiques.
                         </p>
                     </div>
-
-                    {/* Active Subscription Alert with M3 Login */}
-                    {currentSubscription && currentSubscription.status === 'active' && (
-                        <div className="alert alert-success mb-4 d-flex justify-content-between align-items-center" data-aos="fade-up">
-                            <div>
-                                <h5 className="mb-1">✅ Active Subscription</h5>
-                                <p className="mb-0">
-                                    Your subscription is active until{' '}
-                                    {new Date(currentSubscription.expires_at).toLocaleDateString()}
-                                </p>
-                            </div>
-                            <a
-                                href="http://localhost:5173"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn btn-primary"
-                            >
-                                <i className="feather-external-link me-2"></i>
-                                Login to M3 Platform
-                            </a>
+                    <div hidden className="interset-btn aos" data-aos="fade-up">
+                        <div className="status-toggle d-inline-flex align-items-center">
+                            National{" "}
+                            <InputSwitch
+                                key={"packCountryMode"}
+                                style={{margin: "0 10px"}}
+                                checked={countryModechecked.checked}
+                                onChange={() => handleSwitchCountry()}
+                            />
+                            International
                         </div>
-                    )}
-
+                    </div>
+                    <div className="interset-btn aos" data-aos="fade-up">
+                        <div className="status-toggle d-inline-flex align-items-center">
+                            Mensuel{" "}
+                            <InputSwitch
+                                key={"packPeriod"}
+                                style={{margin: "0 10px"}}
+                                checked={periodChecked.checked}
+                                onChange={() => handleSwitchPeriod()}
+                            />
+                            Annuel
+                        </div>
+                    </div>
                     <div className="price-wrap aos" data-aos="fade-up">
                         <div className="row justify-content-center">
                             {loading ? (
@@ -600,104 +545,106 @@ const Home = () => {
                                     <div className="spinner-border text-primary" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
-                                    <p className="mt-2">Loading subscription plans...</p>
+                                    <p className="mt-2">Chargement des packs...</p>
                                 </div>
-                            ) : displayedPlans.length <= 0 ? (
+                            ) : packsToDisplay.length <= 0 ? (
                                 <div className="text-center">
                                     <ImageWithBasePath
                                         src={"assets/img/no-data.svg"}
-                                        alt="No plans found"
+                                        alt="No pack found"
                                         style={{
                                             height: "22.5rem",
                                         }}
                                     />
                                     <p className="mt-3">
-                                        No subscription plans available
+                                        Aucun pack disponible pour cette sélection
                                     </p>
                                 </div>
                             ) : (
-                                displayedPlans.map((plan, index) => (
+                                packsToDisplay.map((pack, index) => (
                                     <div
                                         className="col-lg-4 d-flex col-md-6"
-                                        key={plan.id || index}
+                                        key={pack.id || index}
                                     >
                                         <div className="price-card flex-fill">
                                             <div
                                                 className={
-                                                    plan.id === "annual"
+                                                    pack.title.includes("Or")
                                                         ? "price-head expert-price"
                                                         : "price-head"
                                                 }
                                             >
                                                 <ImageWithBasePath
                                                     src={
-                                                        plan.id === "annual"
+                                                        pack.title.includes("Or")
                                                             ? "assets/img/icons/price-02.svg"
                                                             : "assets/img/icons/price-01.svg"
                                                     }
                                                     alt="Price"
                                                 />
 
-                                                <h3>{plan.name}</h3>
-                                                <span hidden={plan.id !== "annual"}>
-                                                    {t('common.recommended')}
+                                                <h3>{pack.title}</h3>
+                                                <span hidden={!pack.title.includes("Or")}>
+                                                    Recommandé
                                                 </span>
                                             </div>
                                             <div className="price-body">
                                                 <div className="per-month">
                                                     <h2>
                                                         <span>
-                                                            ${plan.price}
+                                                            {formatPrice(
+                                                                pack.currency === "XOF"
+                                                                    ? "fr-FR"
+                                                                    : "en-US",
+                                                                pack.price,
+                                                                pack.currency
+                                                            )}
                                                         </span>
-                                                        <sup>&dollar;</sup>
+
+                                                        {pack.currency === "EUR" ? (
+                                                            <sup>&euro;</sup>
+                                                        ) : pack.currency === "USD" ? (
+                                                            <sup>&dollar;</sup>
+                                                        ) : (
+                                                            <sup>FCFA</sup>
+                                                        )}
                                                     </h2>
                                                     <span>
-                                                        per {plan.duration} days
+                                                        Par{" "}
+                                                        {pack.period.replace(
+                                                            pack.period[0],
+                                                            pack.period[0].toUpperCase()
+                                                        )}{" "}
+                                                        HT
                                                     </span>
                                                 </div>
                                                 <div className="features-price-list">
-                                                    <h5>{t('common.features')}</h5>
+                                                    <h5>Options</h5>
+                                                    <p>Vidéos</p>
                                                     <ul>
-                                                        {plan.features.map((feature, idx) => (
-                                                            <li key={idx} className="active">
-                                                                <i className="feather-check-circle" />
-                                                                {feature}
-                                                            </li>
-                                                        ))}
+                                                        <li className="active">
+                                                            <i className="feather-check-circle" />
+                                                            Inclus : Championnat de U20
+                                                        </li>
+                                                        <li className="active">
+                                                            <i className="feather-check-circle" />
+                                                            Inclus : Analyse Data (Données){" "}
+                                                        </li>
                                                     </ul>
                                                 </div>
                                                 <div className="price-choose">
                                                     <button
-                                                        onClick={() => handleSubscribe(plan)}
-                                                        disabled={processingPayment || (currentSubscription?.status === 'active')}
-                                                        className="btn viewdetails-btn w-100 mb-2"
+                                                        onClick={() => handleChoicePack(pack)}
+                                                        className="btn viewdetails-btn"
+                                                        disabled={loading}
                                                     >
-                                                        {processingPayment && selectedPlan === plan.id ? (
+                                                        {loading ? (
                                                             <>
-                                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                                Processing...
-                                                            </>
-                                                        ) : currentSubscription?.status === 'active' ? (
-                                                            'Already Subscribed'
-                                                        ) : (
-                                                            t('pricing.choose')
-                                                        )}
-                                                    </button>
-
-                                                    {/* TEST MODE BUTTON */}
-                                                    <button
-                                                        onClick={() => handleTestModeSubscribe(plan)}
-                                                        disabled={processingPayment || (currentSubscription?.status === 'active')}
-                                                        className="btn btn-warning w-100 btn-sm"
-                                                        style={{ fontSize: '0.85rem' }}
-                                                    >
-                                                        {processingPayment && selectedPlan === plan.id ? (
-                                                            <>
-                                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                                Testing...
+                                                                <i className="feather-loader me-2"></i>
+                                                                Traitement...
                                                             </>
                                                         ) : (
-                                                            '🧪 Test Mode (Skip Payment)'
+                                                            "Choisissez votre pack"
                                                         )}
                                                     </button>
                                                 </div>

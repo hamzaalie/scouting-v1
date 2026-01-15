@@ -4,12 +4,10 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import {all_routes} from "../router/all_routes";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
-import {useTranslation} from "react-i18next";
 
 const Footer = () => {
     const routes = all_routes;
     const isUserConnected = localStorageFunctions.getUser();
-    const { t } = useTranslation();
 
     useEffect(() => {
         AOS.init({duration: 1000, once: true});
@@ -22,12 +20,13 @@ const Footer = () => {
                     <>
                         {/* Footer Join */}
                         <div className="footer-join aos" data-aos="fade-up">
-                            <h2>{t('footer.accelerateSuccess')}</h2>
+                            <h2>Accélérez votre Succès</h2>
                             <p className="sub-title">
-                                {t('footer.discoverPower')}
+                                Découvrez comment la puissance des données peut transformer le
+                                football ivoirien.
                             </p>
                             <Link to={routes.register} className="btn btn-primary">
-                                <i className="feather-user-plus" /> {t('footer.joinUs')}
+                                <i className="feather-user-plus" /> Rejoignez-nous
                             </Link>
                         </div>
                         {/* /Footer Join */}
@@ -39,14 +38,14 @@ const Footer = () => {
                         <div className="col-lg-3 col-md-6">
                             {/* Footer Widget */}
                             <div className="footer-widget footer-menu">
-                                <h4 className="footer-title">{t('footer.contactUs')}</h4>
+                                <h4 className="footer-title">Nous contacter</h4>
                                 <div className="footer-address-blk">
                                     <div className="footer-call">
-                                        <span>{t('footer.idaSupport')}</span>
+                                        <span>Support IDA</span>
                                         <p>07 00 00 00 00</p>
                                     </div>
                                     <div className="footer-call">
-                                        <span>{t('footer.email')}</span>
+                                        <span>Email</span>
                                         <p>ida@example.com</p>
                                     </div>
                                 </div>
@@ -80,16 +79,16 @@ const Footer = () => {
                         <div className="col-lg-3 col-md-6">
                             {/* Footer Widget */}
                             <div className="footer-widget footer-menu">
-                                <h4 className="footer-title">{t('footer.links')}</h4>
+                                <h4 className="footer-title">Liens</h4>
                                 <ul>
                                     <li>
-                                        <Link to={routes.home}>{t('footer.home')}</Link>
+                                        <Link to={routes.home}>Accueil</Link>
                                     </li>
                                     <li>
-                                        <Link to={routes.aboutUs}>{t('footer.aboutUs')}</Link>
+                                        <Link to={routes.aboutUs}>À propos de nous</Link>
                                     </li>
                                     <li>
-                                        <Link to={routes.pricing}>{t('footer.buyPacks')}</Link>
+                                        <Link to={routes.pricing}>Achat de Packs</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -98,26 +97,26 @@ const Footer = () => {
                         <div className="col-lg-3 col-md-6">
                             {/* Footer Widget */}
                             <div className="footer-widget footer-menu">
-                                <h4 className="footer-title">{t('footer.support')}</h4>
+                                <h4 className="footer-title">Support</h4>
                                 <ul>
                                     <li>
-                                        <Link to={routes.contactUs}>{t('footer.contactUs')}</Link>
+                                        <Link to={routes.contactUs}>Nous contacter</Link>
                                     </li>
                                     <li>
-                                        <Link to={routes.faq}>{t('footer.faq')}</Link>
+                                        <Link to={routes.faq}>Foire aux questions</Link>
                                     </li>
                                     <li>
                                         <Link to={routes.privacyPolicy}>
-                                            {t('footer.privacyPolicy')}
+                                            Politique de Confidentialité
                                         </Link>
                                     </li>
                                     <li>
                                         <Link to={routes.termsCondition}>
-                                            {t('footer.termsConditions')}
+                                            Termes &amp; Conditions
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to={routes.cookiesPolicy}>{t('footer.cookiesPolicy')}</Link>
+                                        <Link to={routes.cookiesPolicy}>Politique des cookies</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -126,13 +125,13 @@ const Footer = () => {
                         <div className="col-lg-3 col-md-6">
                             {/* Footer Widget */}
                             <div className="footer-widget footer-menu">
-                                <h4 className="footer-title">{t('footer.dashboard')}</h4>
+                                <h4 className="footer-title">Dashboard</h4>
                                 <ul>
                                     <li>
-                                        <Link to={routes.login}>{t('footer.login')}</Link>
+                                        <Link to={routes.login}>Se connecter</Link>
                                     </li>
                                     <li>
-                                        <Link to={routes.register}>{t('footer.register')}</Link>
+                                        <Link to={routes.register}>S&apos;inscrire</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -154,7 +153,7 @@ const Footer = () => {
                                 <div className="copyright-text">
                                     <p className="mb-0">
                                         &copy; {new Date().getFullYear()} Intelligence Data
-                                        Analytics - {t('footer.allRightsReserved')}
+                                        Analytics - Tous droits reservés.
                                     </p>
                                 </div>
                             </div>

@@ -8,12 +8,10 @@ import {backendFunctions} from "../../helpers/backend.helper";
 import {toast} from "react-toastify";
 import {handleExternalAuthLogin} from "./login";
 import {paymentService} from "../../helpers/payment.service";
-import {useTranslation} from "react-i18next";
 
 const Signin = () => {
     const route = all_routes;
     const navigate = useNavigate();
-    const { t } = useTranslation();
 
     //Toggle Password
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -59,21 +57,21 @@ const Signin = () => {
         e?.preventDefault?.();
 
         if (state.email.trim().length === 0 && state.pwd.trim().length === 0) {
-            toast.warn(t('auth.allFieldsRequired'), {
+            toast.warn("Tous les champs sont obligatoires.", {
                 toastId: "defaultToast",
                 theme: "colored",
             });
             return;
         }
         if (!EMAIL_REGEX.test(state.email)) {
-            toast.warn(t('auth.invalidEmail'), {
+            toast.warn("Veuillez entrer une adresse mail s'il vous plaît.", {
                 toastId: "defaultToast",
                 theme: "colored",
             });
             return;
         }
         if (password !== confirmPassword) {
-            toast.warn(t('auth.passwordMismatch'), {
+            toast.warn("Veuillez faire correspondre les mots de passe s'il vous plaît.", {
                 toastId: "defaultToast",
                 theme: "colored",
             });
@@ -99,7 +97,7 @@ const Signin = () => {
                 // Check if we need to redirect to payment after registration
                 if (paymentService.shouldRedirectAfterAuth()) {
                     toast.success(
-                        t('auth.registerSuccessPayment'),
+                        "Inscription réussie. Veuillez vérifier votre email avant de procéder au paiement.",
                         {
                             toastId: "defaultToast",
                             theme: "colored",
@@ -111,7 +109,7 @@ const Signin = () => {
                     }, 1500);
                 } else {
                     toast.success(
-                        t('auth.registerSuccess'),
+                        "Inscription réussie! Veuillez vérifier votre email pour activer votre compte.",
                         {
                             toastId: "defaultToast",
                             theme: "colored",
@@ -182,10 +180,12 @@ const Signin = () => {
                                                             className="btn btn-limegreen text-capitalize"
                                                         >
                                                             <i className="fa-solid fa-thumbs-up me-3" />
-                                                            {t('auth.signUp')}
+                                                            S&apos;inscrire
                                                         </button>
                                                         <p>
-                                                            {t('auth.registerSubtitle')}
+                                                            Ensemble, faisons de chaque match une
+                                                            opportunité d&apos;innovation et de
+                                                            progrès.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -209,9 +209,10 @@ const Signin = () => {
                                                     </Link>
                                                 </header>
                                                 <div className="shadow-card">
-                                                    <h2>{t('auth.createAccount')}</h2>
+                                                    <h2>Créer un compte</h2>
                                                     <p>
-                                                        {t('auth.fillAllFields')}
+                                                        Renseignez les champs du formulaire
+                                                        ci-dessous
                                                     </p>
 
                                                     <div className="tab-content" id="myTabContent">
@@ -230,7 +231,7 @@ const Signin = () => {
                                                                             name="firstName"
                                                                             type="text"
                                                                             className="form-control"
-                                                                            placeholder={t('auth.enterFirstName')}
+                                                                            placeholder="Prénom"
                                                                             onChange={handleChange}
                                                                             value={state.firstName}
                                                                         />
@@ -243,7 +244,7 @@ const Signin = () => {
                                                                             name="lastName"
                                                                             type="text"
                                                                             className="form-control"
-                                                                            placeholder={t('auth.enterLastName')}
+                                                                            placeholder="Nom"
                                                                             onChange={handleChange}
                                                                             value={state.lastName}
                                                                         />
@@ -256,7 +257,7 @@ const Signin = () => {
                                                                             name="email"
                                                                             type="text"
                                                                             className="form-control"
-                                                                            placeholder={t('auth.enterEmail')}
+                                                                            placeholder="Adresse e-mail"
                                                                             onChange={handleChange}
                                                                             value={state.email}
                                                                         />
@@ -278,7 +279,7 @@ const Signin = () => {
                                                                                     : "password"
                                                                             }
                                                                             className="form-control pass-input"
-                                                                            placeholder={t('auth.enterPassword')}
+                                                                            placeholder="Mot de passe"
                                                                             value={password}
                                                                             onChange={(e) => {
                                                                                 setPassword(
@@ -304,7 +305,7 @@ const Signin = () => {
                                                                                     : "password"
                                                                             }
                                                                             className="form-control pass-input"
-                                                                            placeholder={t('auth.confirmPassword')}
+                                                                            placeholder="Confirmer le mot de passe"
                                                                             value={confirmPassword}
                                                                             onChange={(e) =>
                                                                                 setConfirmPassword(
@@ -375,14 +376,14 @@ const Signin = () => {
                                                                     }
                                                                 >
                                                                     {loading
-                                                                        ? t('common.loading')
-                                                                        : t('auth.signUp')}
+                                                                        ? "Inscription en cours..."
+                                                                        : "S'inscrire"}
                                                                     <i className="feather-arrow-right-circle ms-2" />
                                                                 </Link>
                                                                 <div className="form-group">
                                                                     <div className="login-options text-center">
                                                                         <span className="text">
-                                                                            {t('auth.orSignUpWith')}
+                                                                            Ou continuez avec
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -435,9 +436,9 @@ const Signin = () => {
                                                 </div>
                                                 <div className="bottom-text text-center">
                                                     <p>
-                                                        {t('auth.hasAccount')}{" "}
+                                                        Vous avez déjà un compte ?{" "}
                                                         <Link to={route.login}>
-                                                            {t('auth.signIn')}
+                                                            Connectez-vous !
                                                         </Link>
                                                     </p>
                                                 </div>

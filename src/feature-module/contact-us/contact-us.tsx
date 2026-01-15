@@ -1,12 +1,9 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {useTranslation} from "react-i18next";
 
 const ContactUs = () => {
     const route = all_routes;
-    const { t } = useTranslation();
-    
     return (
         <div>
             <div className="main-wrapper contact-us-page">
@@ -14,12 +11,12 @@ const ContactUs = () => {
                 <div className="breadcrumb breadcrumb-list mb-0">
                     <span className="primary-right-round" />
                     <div className="container">
-                        <h1 className="text-white">{t('contactUs.title')}</h1>
+                        <h1 className="text-white">Nous contacter</h1>
                         <ul>
                             <li>
-                                <Link to={route.home}>{t('common.home')}</Link>
+                                <Link to={route.home}>Accueil</Link>
                             </li>
-                            <li>{t('contactUs.breadcrumb')}</li>
+                            <li>Nous contacter</li>
                         </ul>
                     </div>
                 </div>
@@ -27,13 +24,13 @@ const ContactUs = () => {
                 {/* Page Content */}
                 <div className="content blog-details contact-group">
                     <div className="container">
-                        <h2 className="text-center mb-40">{t('contactUs.contactInfo')}</h2>
+                        <h2 className="text-center mb-40">Information de contact</h2>
                         <div className="row mb-40">
                             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
                                 <div className="d-flex justify-content-start align-items-center details">
                                     <i className="feather-mail d-flex justify-content-center align-items-center" />
                                     <div className="info">
-                                        <h4>{t('contactUs.email')}</h4>
+                                        <h4>Adresse e-mail</h4>
                                         <p>
                                             <Link to="mailto:support@brainci.org">
                                                 support@brainci.org
@@ -46,7 +43,7 @@ const ContactUs = () => {
                                 <div className="d-flex justify-content-start align-items-center details">
                                     <i className="feather-phone-call d-flex justify-content-center align-items-center" />
                                     <div className="info">
-                                        <h4>{t('contactUs.phone')}</h4>
+                                        <h4>Téléphone</h4>
                                         <p>+225 07 00 00 00 00</p>
                                     </div>
                                 </div>
@@ -55,8 +52,8 @@ const ContactUs = () => {
                                 <div className="d-flex justify-content-start align-items-center details">
                                     <i className="feather-map-pin d-flex justify-content-center align-items-center" />
                                     <div className="info">
-                                        <h4>{t('contactUs.location')}</h4>
-                                        <p>{t('contactUs.locationValue')}</p>
+                                        <h4>Localisation</h4>
+                                        <p>Abidjan, Côte d&apos;Ivoire</p>
                                     </div>
                                 </div>
                             </div>
@@ -79,77 +76,78 @@ const ContactUs = () => {
                     <section className="section dull-bg">
                         <div className="container">
                             <h2 className="text-center mb-40">
-                                {t('contactUs.formTitle')}
+                                Vous pouvez également nous envoyer un message directement en
+                                remplissant le formulaire ci-dessous
                             </h2>
                             <form className="contact-us">
                                 <div className="row">
                                     <div className="col-12 col-sm-12 col-md-6 mb-3">
                                         <label htmlFor="first-name" className="form-label">
-                                            {t('profile.firstName')}
+                                            Prénom
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="first-name"
-                                            placeholder={t('profile.firstName')}
+                                            placeholder="Entrez votre prénom"
                                         />
                                     </div>
                                     <div className="col-12 col-sm-12 col-md-6 mb-3">
                                         <label htmlFor="last-name" className="form-label">
-                                            {t('profile.lastName')}
+                                            Nom
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="last-name"
-                                            placeholder={t('profile.lastName')}
+                                            placeholder="Entrez votre nom"
                                         />
                                     </div>
                                     <div className="col-12 col-sm-12 col-md-6 mb-3">
                                         <label htmlFor="e-mail" className="form-label">
-                                            {t('contactUs.email')}
+                                            Adresse e-mail
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="e-mail"
-                                            placeholder={t('contactUs.yourEmail')}
+                                            placeholder="Entrez votre adresse e-mail"
                                         />
                                     </div>
                                     <div className="col-12 col-sm-12 col-md-6 mb-3">
                                         <label htmlFor="phone" className="form-label">
-                                            {t('contactUs.phone')}
+                                            Numéro de téléphone
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="phone"
-                                            placeholder={t('contactUs.phone')}
+                                            placeholder="Entrez votre numéro de téléphone"
                                         />
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col mb-3">
                                         <label htmlFor="subject" className="form-label">
-                                            {t('contactUs.subject')}
+                                            Objet
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="subject"
-                                            placeholder={t('contactUs.subject')}
+                                            placeholder="Entrez le sujet"
                                         />
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="comments" className="form-label">
-                                        {t('contactUs.message')}
+                                        Description
                                     </label>
                                     <textarea
                                         className="form-control"
                                         id="comments"
                                         rows={3}
-                                        placeholder={t('contactUs.message')}
+                                        placeholder="Entrez une description"
                                         defaultValue={""}
                                     />
                                 </div>
@@ -157,7 +155,7 @@ const ContactUs = () => {
                                     type="button"
                                     className="btn btn-secondary d-flex align-items-center"
                                 >
-                                    {t('contactUs.send')}
+                                    Valider
                                     <i className="feather-arrow-right-circle ms-2" />
                                 </button>
                             </form>

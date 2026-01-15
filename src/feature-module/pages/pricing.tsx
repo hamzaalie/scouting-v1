@@ -9,12 +9,10 @@ import {toast} from "react-toastify";
 import {formatPrice} from "../../helpers/input.helper";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {paymentService} from "../../helpers/payment.service";
-import {useTranslation} from "react-i18next";
 
 const Pricing = () => {
     const routes = all_routes;
     const navigate = useNavigate();
-    const { t } = useTranslation();
 
     // Handle Switch
     const [countryModechecked, setCountryModeChecked] = useState({
@@ -169,14 +167,14 @@ const Pricing = () => {
                             </div>
                             <div className="interset-btn aos" data-aos="fade-up">
                                 <div className="status-toggle d-inline-flex align-items-center">
-                                    {t('common.monthly')}{" "}
+                                    Mensuel{" "}
                                     <InputSwitch
                                         key={"packPeriod"}
                                         style={{margin: "0 10px"}}
                                         checked={periodChecked.checked}
                                         onChange={() => handleSwitchPeriod()}
                                     />
-                                    {t('common.yearly')}
+                                    Annuel
                                 </div>
                             </div>
                             <div className="price-wrap aos" data-aos="fade-up">

@@ -7,11 +7,9 @@ import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {idaSportsUserInterface} from "../../core/data/interface/model";
 import {backendFunctions} from "../../helpers/backend.helper";
 import {toast} from "react-toastify";
-import {useTranslation} from "react-i18next";
 
 const UserProfile = () => {
     const routes = all_routes;
-    const { t } = useTranslation();
     // const [selectedCountry, setSelectedCountry] = useState();
     // const countryList = [{name: "Country"}, {name: "Texas"}];
 
@@ -39,7 +37,7 @@ const UserProfile = () => {
 
                 //console.log("Client updated successfully:", response);
                 localStorageFunctions.setUser(response);
-                toast.success(t('profile.updateSuccess'), {
+                toast.success("Profil mis à jour avec succès.", {
                     toastId: "defaultToast",
                     theme: "colored",
                 });
@@ -50,7 +48,7 @@ const UserProfile = () => {
             .catch((error) => {
                 setLoading(false);
                 console.error("Error updating client:", error);
-                toast.error(t('profile.updateError'), {
+                toast.error("Une erreur est survenue lors de la mise à jour du profil.", {
                     toastId: "defaultToast",
                     theme: "colored",
                 });
@@ -61,7 +59,7 @@ const UserProfile = () => {
         setFirstName(isUserConnected.firstName || "");
         setLastName(isUserConnected.lastName || "");
         setEmail(isUserConnected.email || "");
-        toast.info(t('profile.resetSuccess'), {
+        toast.info("Votre profil a bien été réinitialisé !", {
             toastId: "resetToast",
             theme: "colored",
         });

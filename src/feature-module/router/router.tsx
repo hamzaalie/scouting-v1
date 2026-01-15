@@ -1,6 +1,6 @@
 import React from "react";
 import {publicRoutes, withoutHeaderRoutes} from "./router.link";
-import {Outlet, Route, Routes, Navigate} from "react-router-dom";
+import {Outlet, Route, Routes} from "react-router-dom";
 import Header from "../common/header";
 import Footer from "../common/footer";
 import Loader from "../loader/loader";
@@ -22,9 +22,6 @@ const AllRoutes = () => {
         <>
             <ResetScroll />
             <Routes>
-                {/* Redirect root to home */}
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                
                 <Route path={"/"} element={<HeaderLayout />}>
                     {publicRoutes.map((route, idx) => (
                         <Route path={route.path} element={route.element} key={idx} />

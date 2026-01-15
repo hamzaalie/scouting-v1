@@ -5,15 +5,12 @@ import ImageWithBasePath from "../../core/data/img/ImageWithBasePath";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {toast} from "react-toastify";
 import {idaSportsUserInterface} from "../../core/data/interface/model";
-import {useTranslation} from "react-i18next";
-import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 const Header = () => {
     const routes = all_routes;
     const location = useLocation();
     const isUserConnected: idaSportsUserInterface = localStorageFunctions.getUser();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { t } = useTranslation();
 
     useEffect(() => {
         // Fermer le menu mobile lors du changement de route
@@ -22,7 +19,7 @@ const Header = () => {
 
     const header = [
         {
-            tittle: t('common.home'),
+            tittle: "Accueil",
             showAsTab: false,
             separateRoute: true,
             routes: routes.home,
@@ -31,7 +28,7 @@ const Header = () => {
             menuId: "homePage",
         },
         {
-            tittle: t('common.about'),
+            tittle: "À propos de nous",
             showAsTab: false,
             separateRoute: true,
             routes: routes.aboutUs,
@@ -40,7 +37,7 @@ const Header = () => {
             menuId: "aboutPage",
         },
         {
-            tittle: t('common.pricing'),
+            tittle: "Packs",
             showAsTab: false,
             separateRoute: true,
             routes: routes.pricing,
@@ -58,7 +55,7 @@ const Header = () => {
             menuId: "faqPage",
         },
         {
-            tittle: t('common.contact'),
+            tittle: "Nous contacter",
             showAsTab: false,
             separateRoute: true,
             routes: routes.contactUs,
@@ -79,7 +76,7 @@ const Header = () => {
             localStorageFunctions.removeUser();
             window.location.href = routes.login;
         } else {
-            toast.info(t('auth.loginPrompt'), {
+            toast.info("Veuillez vous connecter.", {
                 toastId: "defaultToast",
                 theme: "colored",
             });
@@ -217,39 +214,33 @@ const Header = () => {
                                 </React.Fragment>
                             ))}
 
-                            {/* Mobile Menu Items */}
-                            <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
-                                {/* Language Switcher for Mobile */}
-                                <li className="nav-item" style={{ padding: '10px 15px' }}>
-                                    <LanguageSwitcher />
-                                </li>
-                                
-                                {isUserConnected && isUserConnected?.firstName && (
-                                    <>
-                                        <li className="nav-item">
-                                            <Link
-                                                className="nav-link btn-sm btn-secondary"
-                                                to={routes.userBookings}
-                                            >
+                            {isUserConnected && isUserConnected?.firstName && (
+                                <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
+                                    <li className="nav-item">
+                                        <Link
+                                            className="nav-link btn-sm btn-secondary"
+                                            to={routes.userBookings}
+                                        >
+                                            <span>
+                                                <i className="feather-menu" />
+                                            </span>
+                                            Tableau de Bord
+                                        </Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <div className="nav-link btn-sm btn-white log-register">
+                                            <Link to="" onClick={handleLogout}>
                                                 <span>
-                                                    <i className="feather-menu" />
+                                                    <i className="feather-log-out" />
                                                 </span>
-                                                {t('auth.dashboard')}
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                            <div className="nav-link btn-sm btn-white log-register">
-                                                <Link to="" onClick={handleLogout}>
-                                                    <span>
-                                                        <i className="feather-log-out" />
-                                                    </span>
-                                                    {t('auth.logout')}
-                                                </Link>{" "}
-                                            </div>
-                                        </li>
-                                    </>
-                                )}
-                                {!isUserConnected?.firstName && (
+                                                Se déconnecter
+                                            </Link>{" "}
+                                        </div>
+                                    </li>
+                                </div>
+                            )}
+                            {!isUserConnected?.firstName && (
+                                <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
                                     <li className="nav-item">
                                         <Link
                                             className="nav-link btn-sm btn-secondary"
@@ -258,22 +249,17 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-users" />
                                             </span>
-                                            {t('auth.loginSignup')}
+                                            Se connecter / S&apos;inscrire
                                         </Link>{" "}
                                     </li>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </ul>
                     </div>
                     <ul
                         className="nav header-navbar-rht"
                         style={isMobileMenuOpen ? {display: "none"} : {}}
                     >
-                        {/* Language Switcher */}
-                        <li className="nav-item" style={{ marginRight: '1rem' }}>
-                            <LanguageSwitcher />
-                        </li>
-                        
                         {isUserConnected && isUserConnected?.firstName && (
                             <>
                                 <li className="nav-item">
@@ -284,7 +270,7 @@ const Header = () => {
                                         <span>
                                             <i className="feather-menu" />
                                         </span>
-                                        {t('auth.dashboard')}
+                                        Tableau de Bord
                                     </Link>
                                 </li>
                                 <li className="nav-item">
@@ -293,7 +279,7 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-log-out" />
                                             </span>
-                                            {t('auth.logout')}
+                                            Se déconnecter
                                         </Link>{" "}
                                     </div>
                                 </li>
@@ -306,7 +292,7 @@ const Header = () => {
                                         <span>
                                             <i className="feather-users" />
                                         </span>
-                                        {t('auth.loginSignup')}
+                                        Se connecter / S&apos;inscrire
                                     </Link>{" "}
                                 </li>
                             </>

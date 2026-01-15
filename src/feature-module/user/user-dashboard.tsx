@@ -36,16 +36,6 @@ const UserDashboard = () => {
                             <div className="dashboard-menu">
                                 <ul>
                                     <li>
-                                        <Link to={routes.userSubscription}>
-                                            <ImageWithBasePath
-                                                src="assets/img/icons/price-01.svg"
-                                                alt="Icon"
-                                            />
-                                            <span>Abonnement</span>
-                                        </Link>
-                                    </li>
-
-                                    <li>
                                         <Link to={routes.userBookings}>
                                             <ImageWithBasePath
                                                 src="assets/img/icons/booking-icon.svg"

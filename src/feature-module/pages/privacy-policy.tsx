@@ -1,11 +1,9 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {useTranslation} from "react-i18next";
 
 const PrivacyPolicy = () => {
     const routes = all_routes;
-    const {t} = useTranslation();
     return (
         <div>
             <>
@@ -13,12 +11,13 @@ const PrivacyPolicy = () => {
                 <div className="breadcrumb breadcrumb-list mb-0">
                     <span className="primary-right-round" />
                     <div className="container">
-                        <h1 className="text-white">{t('privacyPolicy.title')}</h1>
+                        <h1 className="text-white">Politique de Confidentialité</h1>
                         <ul>
                             <li>
-                                <Link to={routes.home}>{t('privacyPolicy.breadcrumbHome')}</Link>
+                                <Link to={routes.home}>Accueil</Link>
                             </li>
-                            <li>{t('privacyPolicy.breadcrumb')}</li>
+                            <li>Politique de Confidentialité</li>
+                            <li>Politique de protection des données personnelles</li>
                         </ul>
                     </div>
                 </div>
@@ -26,149 +25,142 @@ const PrivacyPolicy = () => {
                 {/* Page Content */}
                 <div className="content">
                     <div className="container">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="condition-details">
-                                    {/* Header */}
-                                    <div className="text-center mb-5">
-                                        <h2 className="text-primary mb-3">{t('privacyPolicy.title')}</h2>
-                                        <h4 className="text-secondary mb-2">{t('privacyPolicy.subtitle')}</h4>
-                                        <p className="text-muted"><em>{t('privacyPolicy.updateDate')}</em></p>
-                                    </div>
+                        <h2>Protection des données personnelles</h2>
+                        <div className="condition-details">
+                            <br />
+                            <p>
+                                LES ÉLÉMENTS ESSENTIELS ET NÉCESSAIRES D&apos;UNE DEMANDE
+                                D&apos;EXERCICE DES DROITS DE LA PERSONNE CONCERNÉE DANS LE DOMAINE
+                                DU TRAITEMENT ET DE LA PROTECTION DES DONNÉES PERSONNELLES
+                            </p>
+                            <p>
+                                Conformément au règlement (UE) 2016/679 du Parlement européen et du
+                                Conseil du 27 avril 2016 Données générales Règlement de protection
+                                (ci-après dénommé le « Règlement » ou « RGPD »), loi n° 110/2019
+                                Coll., sur le traitement des données personnelles (ci-après dénommée
+                                « Loi »), et l&apos;article 35 de la loi n° 2013-450 du 19 juin 2013
+                                relative à la protection des données à caractère personnel de
+                                l&apos;Autorité de Régulation des Télécommunications/TIC de Côte
+                                d&apos;Ivoire (ci-après dénommé « ARTCI »)
+                            </p>
+                            <br />
+                            <span className="fs-4 text-primary fw-bold">
+                                I. Responsable du traitement des données personnelles
+                            </span>
+                            <br />
+                            <p>
+                                Brainci SARL, dont le siège social est situé, , numéro
+                                d&apos;identification : , ID de boîte de données : 9y9r5s5, (la «
+                                Société » ou le « Contrôleur »).
+                            </p>
+                            <br />
+                            <span className="fs-4 text-primary fw-bold">
+                                II. Détails du contact
+                            </span>
+                            <br />
+                            <p>
+                                La fonction de délégué à la protection des données du responsable du
+                                traitement est exercée par Manuel Ahouzi avec email :
+                                <a href="mailto:braincisarl@gmail.com">braincisarl@gmail.com</a>
+                            </p>
 
-                                    {/* Introduction */}
-                                    <div className="mb-5">
-                                        <p className="lead">
-                                            {t('privacyPolicy.intro')}
-                                        </p>
-                                    </div>
+                            <br />
+                            <span className="fs-4 text-primary fw-bold">
+                                III. Droits des personnes concernées
+                            </span>
+                            <br />
+                            <p>
+                                Conformément à l&apos;article 35 de la loi n° 2013-450 du 19 juin
+                                2013 de l&apos;ARTCI, les personnes concernées disposent des droits
+                                suivants :
+                            </p>
+                            <ol style={{listStyleType: "square"}}>
+                                <li>Le droit de retirer son consentement </li>
+                                <li>Le droit d&apos;accès du sujet aux données </li>
+                                <li>Le droit à la rectification </li>
+                                <li>Le droit à l&apos;effacement (droit « à l&apos;oubli ») </li>
+                                <li>Le droit à la limitation du traitement </li>
+                                <li>
+                                    Le droit à l&apos;obligation de notification concernant les
+                                    modifications des données personnelles ou les restrictions de
+                                    traitement{" "}
+                                </li>
+                                <li>Le droit à la portabilité des données </li>
+                                <li>
+                                    Le droit de s&apos;opposer, sauf exemption prévue par la loi ou
+                                    le RGPD{" "}
+                                </li>
+                                <li>
+                                    Le droit à une prise de décision individuelle automatisée, y
+                                    compris le profilage{" "}
+                                </li>
+                                <li>
+                                    Le droit d&apos;être informé de l&apos;origine et de
+                                    l&apos;acquisition des données personnelles lorsque les données
+                                    personnelles n&apos;ont pas été fournies par la personne
+                                    concernée au responsable du traitement.{" "}
+                                </li>
+                                <li>
+                                    Les formulaires d&apos;exercice des droits : opposition au
+                                    traitement des données personnelles, exercice du droit à la
+                                    portabilité des données, retrait du consentement, rectification,
+                                    limitation du traitement, effacement et accès aux données
+                                    personnelles sont disponibles auprès de notre responsable du
+                                    traitement.
+                                </li>
+                            </ol>
 
-                                    {/* Section 1 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section1Title')}</h3>
-                                        <p>{t('privacyPolicy.section1Text')}</p>
-                                    </div>
+                            <br />
+                            <span className="fs-4 text-primary fw-bold">
+                                V. Détails de la demande
+                            </span>
+                            <br />
 
-                                    {/* Section 2 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section2Title')}</h3>
-                                        <p>{t('privacyPolicy.section2Intro')}</p>
-                                        <p className="fw-bold mt-3">{t('privacyPolicy.section2Subtitle')}</p>
-                                        <ul className="list-unstyled ps-4">
-                                            <li className="mb-2"><i className="feather-check-circle text-success me-2"></i>{t('privacyPolicy.section2Item1')}</li>
-                                            <li className="mb-2"><i className="feather-check-circle text-success me-2"></i>{t('privacyPolicy.section2Item2')}</li>
-                                            <li className="mb-2"><i className="feather-check-circle text-success me-2"></i>{t('privacyPolicy.section2Item3')}</li>
-                                            <li className="mb-2"><i className="feather-check-circle text-success me-2"></i>{t('privacyPolicy.section2Item4')}</li>
-                                        </ul>
-                                    </div>
+                            <ol type="1" style={{paddingTop: "10px"}}>
+                                <li>
+                                    Une personne qui souhaite exercer ses droits concernant les
+                                    données personnelles doit indiquer dans une demande écrite les
+                                    motifs pertinents et les faits auxquels elle s&apos;oppose et
+                                    souhaite faire valoir.
+                                </li>
+                                <li>
+                                    Chaque candidature doit contenir les exigences légales pour la
+                                    soumission de la candidature et le candidat doit prouver son
+                                    identité, par exemple par une signature certifiée pour une
+                                    candidature papier ou une signature électronique reconnue pour
+                                    une candidature électronique, ou par une soumission via une
+                                    boîte de données.{" "}
+                                </li>
+                                <li>
+                                    Si la demande ne répond pas aux exigences légales, le demandeur
+                                    sera invité par écrit à remédier à la situation ; en cas de
+                                    non-respect du délai imparti, la demande sera rejetée.
+                                </li>
+                            </ol>
 
-                                    {/* Section 3 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section3Title')}</h3>
-                                        <p>{t('privacyPolicy.section3Intro')}</p>
-                                        <ul className="list-unstyled ps-4">
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section3Item1')}</li>
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section3Item2')}</li>
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section3Item3')}</li>
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section3Item4')}</li>
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section3Item5')}</li>
-                                        </ul>
-                                    </div>
+                            <br />
+                            <span className="fs-4 text-primary fw-bold">VII. Remèdes</span>
+                            <br />
 
-                                    {/* Section 4 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section4Title')}</h3>
-                                        <p>{t('privacyPolicy.section4Intro')}</p>
-                                        <ul className="list-unstyled ps-4">
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section4Item1')}</li>
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section4Item2')}</li>
-                                            <li className="mb-2"><i className="feather-arrow-right text-primary me-2"></i>{t('privacyPolicy.section4Item3')}</li>
-                                        </ul>
-                                    </div>
-
-                                    {/* Section 5 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section5Title')}</h3>
-                                        <p>{t('privacyPolicy.section5Text')}</p>
-                                    </div>
-
-                                    {/* Section 6 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section6Title')}</h3>
-                                        <p>{t('privacyPolicy.section6Text')}</p>
-                                    </div>
-
-                                    {/* Section 7 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section7Title')}</h3>
-                                        <p>{t('privacyPolicy.section7Intro')}</p>
-                                        <ul className="list-unstyled ps-4">
-                                            <li className="mb-2"><i className="feather-clock text-info me-2"></i>{t('privacyPolicy.section7Item1')}</li>
-                                            <li className="mb-2"><i className="feather-clock text-info me-2"></i>{t('privacyPolicy.section7Item2')}</li>
-                                            <li className="mb-2"><i className="feather-clock text-info me-2"></i>{t('privacyPolicy.section7Item3')}</li>
-                                        </ul>
-                                    </div>
-
-                                    {/* Section 8 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section8Title')}</h3>
-                                        <p>{t('privacyPolicy.section8Intro')}</p>
-                                        <ul className="list-unstyled ps-4">
-                                            <li className="mb-2"><i className="feather-shield text-warning me-2"></i>{t('privacyPolicy.section8Item1')}</li>
-                                            <li className="mb-2"><i className="feather-shield text-warning me-2"></i>{t('privacyPolicy.section8Item2')}</li>
-                                            <li className="mb-2"><i className="feather-shield text-warning me-2"></i>{t('privacyPolicy.section8Item3')}</li>
-                                            <li className="mb-2"><i className="feather-shield text-warning me-2"></i>{t('privacyPolicy.section8Item4')}</li>
-                                            <li className="mb-2"><i className="feather-shield text-warning me-2"></i>{t('privacyPolicy.section8Item5')}</li>
-                                        </ul>
-                                        <p className="mt-3 text-muted"><em>{t('privacyPolicy.section8Footer')}</em></p>
-                                    </div>
-
-                                    {/* Section 9 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section9Title')}</h3>
-                                        <p>{t('privacyPolicy.section9Text')}</p>
-                                    </div>
-
-                                    {/* Section 10 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section10Title')}</h3>
-                                        <p>{t('privacyPolicy.section10Text')}</p>
-                                    </div>
-
-                                    {/* Section 11 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section11Title')}</h3>
-                                        <p>{t('privacyPolicy.section11Text')}</p>
-                                    </div>
-
-                                    {/* Section 12 */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section12Title')}</h3>
-                                        <p>{t('privacyPolicy.section12Text')}</p>
-                                    </div>
-
-                                    {/* Section 13 - Contact */}
-                                    <div className="mb-4">
-                                        <h3 className="text-primary mb-3">{t('privacyPolicy.section13Title')}</h3>
-                                        <p className="mb-3">{t('privacyPolicy.section13Intro')}</p>
-                                        <div className="bg-light p-4 rounded">
-                                            <p className="fw-bold mb-3">{t('privacyPolicy.section13Company')}</p>
-                                            <p className="mb-2">
-                                                <i className="feather-mail text-primary me-2"></i>
-                                                <strong>{t('privacyPolicy.section13Email')}</strong> <a href="mailto:braincisarl@gmail.com">braincisarl@gmail.com</a>
-                                            </p>
-                                            <p className="mb-2">
-                                                <i className="feather-map-pin text-primary me-2"></i>
-                                                <strong>{t('privacyPolicy.section13Address')}</strong>
-                                            </p>
-                                            <p className="mb-0">
-                                                <i className="feather-phone text-primary me-2"></i>
-                                                <strong>{t('privacyPolicy.section13Phone')}</strong>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <ol style={{paddingTop: "10px", listStyleType: "square"}}>
+                                <li>
+                                    Si la demande de la personne concernée conformément au
+                                    paragraphe 1 s&apos;avère justifiée, le responsable du
+                                    traitement remédie sans délai à la situation défectueuse,
+                                </li>
+                                <li>
+                                    Si le responsable du traitement ne donne pas suite à la demande
+                                    de la personne concernée conformément au paragraphe 1, la
+                                    personne concernée a le droit de s&apos;adresser directement à
+                                    l&apos;autorité de contrôle, c&apos;est-à-dire en République
+                                    tchèque, à l&apos;Office pour la protection des données
+                                    personnelles, Pplk. Sochora 27, 170 00 Praha 7 ou
+                                    l&apos;autorité de contrôle du pays de résidence ou
+                                    d&apos;établissement de la personne concernée dans l&apos;UE,
+                                    notamment de la manière spécifiée par le responsable du
+                                    traitement dans le document de décision.
+                                </li>
+                            </ol>
                         </div>
                     </div>
                 </div>

@@ -1,23 +1,21 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {all_routes} from "../router/all_routes";
-import {useTranslation} from "react-i18next";
 
 const Faq = () => {
     const routes = all_routes;
-    const {t} = useTranslation();
     return (
         <div>
             {/* Breadcrumb */}
             <div className="breadcrumb breadcrumb-list mb-0">
                 {/* <span className="primary-right-round" /> */}
                 <div className="container">
-                    <h1 className="text-white">{t('faq.title')}</h1>
+                    <h1 className="text-white">FAQ</h1>
                     <ul>
                         <li>
-                            <Link to={routes.home}>{t('faq.breadcrumbHome')}</Link>
+                            <Link to={routes.home}>Accueil</Link>
                         </li>
-                        <li>{t('faq.breadcrumbFAQ')}</li>
+                        <li>Foire Aux Questions</li>
                     </ul>
                 </div>
             </div>
@@ -41,7 +39,7 @@ const Faq = () => {
                                                     aria-expanded="true"
                                                     aria-controls="collapseOne"
                                                 >
-                                                    {t('faq.q1')}
+                                                    Qu&apos;est-ce qu&apos;IDA ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -53,7 +51,17 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a1')}
+                                                            IDA (Intelligence Data Analytics) est un
+                                                            projet innovant dédié à la collecte,
+                                                            l&apos;analyse, et l&apos;exploitation
+                                                            des données sportives en Côte
+                                                            d&apos;Ivoire, en particulier dans le
+                                                            domaine du football. Nous utilisons des
+                                                            caméras intelligentes dotées d&apos;IA
+                                                            pour capturer des données précises à
+                                                            partir des matchs, offrant des analyses
+                                                            approfondies pour les clubs, les
+                                                            entraîneurs, et les agents.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -71,7 +79,8 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseTwo"
                                                 >
-                                                    {t('faq.q2')}
+                                                    Comment fonctionnent les caméras IA de
+                                                    l&apos;IDA ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -83,8 +92,17 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a2part1')} <br />
-                                                            {t('faq.a2part2')}
+                                                            Les caméras sont des dispositifs
+                                                            d&apos;enregistrement vidéo avancés,
+                                                            équipés d&apos;intelligence
+                                                            artificielle, capables de capturer
+                                                            l&apos;intégralité du terrain sans
+                                                            nécessiter d&apos;opérateur. <br />
+                                                            Elles analysent les mouvements des
+                                                            joueurs en temps réel, identifiant
+                                                            automatiquement les moments clés du jeu,
+                                                            ce qui permet une analyse détaillée par
+                                                            la suite.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -102,7 +120,7 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseThree"
                                                 >
-                                                    {t('faq.q3')}
+                                                    Quels types de données pouvez-vous collecter ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -114,8 +132,14 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a3part1')} <br />
-                                                            {t('faq.a3part2')}
+                                                            Nous collectons une variété de données,
+                                                            y compris les statistiques individuelles
+                                                            des joueurs, les positions sur le
+                                                            terrain, les passes, les tirs, les
+                                                            performances ainsi que les données
+                                                            stratégiques des équipes. <br />
+                                                            Ces informations sont ensuite analysées
+                                                            pour fournir des rapports détaillés.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -133,7 +157,7 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseFour"
                                                 >
-                                                    {t('faq.q4')}
+                                                    À qui s&apos;adressent vos services ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -145,7 +169,13 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a4')}
+                                                            Nos services s&apos;adressent aux clubs
+                                                            de football, aux entraîneurs, aux
+                                                            agents, aux recruteurs, ainsi qu&apos;à
+                                                            tout professionnel du football cherchant
+                                                            à exploiter les données pour améliorer
+                                                            les performances, identifier les talents
+                                                            ou affiner les stratégies de jeu.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -163,7 +193,7 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseFive"
                                                 >
-                                                    {t('faq.q5')}
+                                                    Comment puis-je accéder aux analyses de match ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -175,7 +205,13 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a5')}
+                                                            Les analyses de match sont accessibles
+                                                            via notre plateforme en ligne. Les clubs
+                                                            et autres partenaires peuvent se
+                                                            connecter pour visualiser les rapports,
+                                                            télécharger les données, et obtenir des
+                                                            insights personnalisés en fonction de
+                                                            leurs besoins.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -194,7 +230,8 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseSix"
                                                 >
-                                                    {t('faq.q6')}
+                                                    Quels sont les avantages d&apos;utiliser IDA
+                                                    pour mon club ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -206,8 +243,18 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a6part1')}
-                                                            <br /> {t('faq.a6part2')}
+                                                            L&apos;utilisation des services IDA
+                                                            permet d&apos;obtenir une vue détaillée
+                                                            et objective des performances de votre
+                                                            équipe. Vous pouvez identifier les
+                                                            forces et faiblesses de vos joueurs,
+                                                            ajuster vos stratégies en conséquence,
+                                                            et améliorer vos chances de succès sur
+                                                            le terrain.
+                                                            <br /> De plus, les données collectées
+                                                            peuvent également être utilisées pour
+                                                            valoriser vos joueurs auprès des
+                                                            recruteurs et agents internationaux.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -225,7 +272,7 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseSeven"
                                                 >
-                                                    {t('faq.q7')}
+                                                    Offrez-vous des services personnalisés ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -237,7 +284,14 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a7')}
+                                                            Oui, nous proposons des services sur
+                                                            mesure en fonction des besoins
+                                                            spécifiques de chaque client. Que vous
+                                                            ayez besoin d&apos;une analyse
+                                                            spécifique pour un match ou d&apos;un
+                                                            suivi continu sur toute la saison, nous
+                                                            pouvons adapter nos services à vos
+                                                            exigences.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -255,7 +309,8 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseEight"
                                                 >
-                                                    {t('faq.q8')}
+                                                    Comment puis-je m&apos;inscrire pour utiliser
+                                                    vos services ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -267,15 +322,19 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a8part1')}
+                                                            Pour vous inscrire à nos services, vous
+                                                            pouvez visiter la page
                                                             <Link to={routes.register}>
-                                                                {t('faq.a8Registration')}
+                                                                Inscription
                                                             </Link>{" "}
-                                                            {t('faq.a8part2')}{" "}
+                                                            sur notre site web ou nous contacter
+                                                            directement via notre page{" "}
                                                             <Link to={routes.contactUs}>
-                                                                {t('faq.a8Contact')}
+                                                                Contact
                                                             </Link>{" "}
-                                                            <br /> {t('faq.a8part3')}
+                                                            <br /> Notre équipe vous guidera à
+                                                            travers le processus et vous fournira
+                                                            toutes les informations nécessaires.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -293,7 +352,8 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseNine"
                                                 >
-                                                    {t('faq.q9')}
+                                                    Est-ce que vos services couvrent uniquement les
+                                                    équipes ivoiriennes ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -305,7 +365,12 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a9')}
+                                                            Non, bien que notre projet soit centré
+                                                            sur le développement du football en Côte
+                                                            d&apos;Ivoire, nous sommes ouverts à
+                                                            collaborer avec des clubs et
+                                                            organisations de football dans
+                                                            d&apos;autres pays.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -323,7 +388,8 @@ const Faq = () => {
                                                     aria-expanded="false"
                                                     aria-controls="collapseTen"
                                                 >
-                                                    {t('faq.q10')}
+                                                    Comment puis-je vous contacter pour plus
+                                                    d&apos;informations ?
                                                 </Link>
                                             </h2>
                                             <div
@@ -335,16 +401,18 @@ const Faq = () => {
                                                 <div className="accordion-body">
                                                     <div className="accordion-content">
                                                         <p>
-                                                            {t('faq.a10part1')}{" "}
+                                                            Vous pouvez nous contacter via notre
+                                                            page{" "}
                                                             <Link to={routes.contactUs}>
-                                                                {t('faq.a10Contact')}
+                                                                Contact
                                                             </Link>{" "}
-                                                            {t('faq.a10part2')}
+                                                            sur le site, ou par email à
                                                             <Link to="mailto:email@example.com">
                                                                 email@example.com
                                                             </Link>
                                                             . <br />
-                                                            {t('faq.a10part3')}
+                                                            Nous serons ravis de répondre à toutes
+                                                            vos questions
                                                         </p>
                                                     </div>
                                                 </div>
