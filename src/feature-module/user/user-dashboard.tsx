@@ -1,16 +1,18 @@
 import React from "react";
-import {Link, useLocation} from "react-router-dom";
+import {Link} from "react-router-dom";
 import ImageWithBasePath from "../../core/data/img/ImageWithBasePath";
 import {all_routes} from "../router/all_routes";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {idaSportsUserInterface} from "../../core/data/interface/model";
+import { useSubscription } from "../../hooks/useSubscription";
+import { useTranslation } from 'react-i18next';
 
 const UserDashboard = () => {
     const routes = all_routes;
-    const location = useLocation();
     const isUserConnected: idaSportsUserInterface = localStorageFunctions.getUser();
+    const { hasActiveSubscription } = useSubscription();
+    const { t } = useTranslation();
     //console.log("🚀 ~ UserDashboard ~ isUserConnected:", isUserConnected);
-    //console.log( "location");
 
     return (
         <div>
@@ -18,12 +20,12 @@ const UserDashboard = () => {
             <section className="breadcrumb breadcrumb-list mb-0">
                 <span className="primary-right-round" />
                 <div className="container">
-                    <h1 className="text-white">Bienvenue, {isUserConnected?.firstName} !</h1>
+                    <h1 className="text-white">{t('dashboard.welcome')}, {isUserConnected?.firstName} !</h1>
                     <ul>
                         <li>
-                            <Link to={routes.home}>Accueil</Link>
+                            <Link to={routes.home}>{t('dashboard.breadcrumbHome')}</Link>
                         </li>
-                        <li>Tableau de Bord</li>
+                        <li>{t('dashboard.breadcrumbDashboard')}</li>
                     </ul>
                 </div>
             </section>
@@ -41,7 +43,7 @@ const UserDashboard = () => {
                                                 src="assets/img/icons/booking-icon.svg"
                                                 alt="Icon"
                                             />
-                                            <span>Packs</span>
+                                            <span>{t('dashboard.menuPacks')}</span>
                                         </Link>
                                     </li>
 
@@ -51,7 +53,7 @@ const UserDashboard = () => {
                                                 src="assets/img/icons/invoice-icon.svg"
                                                 alt="Icon"
                                             />
-                                            <span>Factures</span>
+                                            <span>{t('dashboard.menuInvoices')}</span>
                                         </Link>
                                     </li>
 
@@ -61,7 +63,7 @@ const UserDashboard = () => {
                                                 src="assets/img/icons/profile-icon.svg"
                                                 alt="Icon"
                                             />
-                                            <span>Paramètres</span>
+                                            <span>{t('dashboard.menuSettings')}</span>
                                         </Link>
                                     </li>
                                     <li>
@@ -70,7 +72,7 @@ const UserDashboard = () => {
                                                 <i className="fs-3 feather-help-circle" />
                                             </span>
 
-                                            <span>Réclamations</span>
+                                            <span>{t('dashboard.menuClaims')}</span>
                                         </Link>
                                     </li>
                                 </ul>
@@ -88,15 +90,15 @@ const UserDashboard = () => {
                         <div className="col-lg-12">
                             <div className="card dashboard-card statistics-card">
                                 <div className="card-header">
-                                    <h4>Statistics</h4>
-                                    <p>Boost your game with stats and goals tailored to you</p>
+                                    <h4>{t('dashboard.statistics')}</h4>
+                                    <p>{t('dashboard.statisticsSubtitle')}</p>
                                 </div>
                                 <div className="row">
                                     <div className="col-xl-3 col-lg-6 col-md-6 d-flex">
                                         <div className="statistics-grid flex-fill">
                                             <div className="statistics-content">
                                                 <h3>78</h3>
-                                                <p>Total Court Booked</p>
+                                                <p>{t('dashboard.totalCourtBooked')}</p>
                                             </div>
                                             <div className="statistics-icon">
                                                 <ImageWithBasePath
@@ -110,7 +112,7 @@ const UserDashboard = () => {
                                         <div className="statistics-grid flex-fill">
                                             <div className="statistics-content">
                                                 <h3>45</h3>
-                                                <p>Total Coaches Booked</p>
+                                                <p>{t('dashboard.totalCoachesBooked')}</p>
                                             </div>
                                             <div className="statistics-icon">
                                                 <ImageWithBasePath
@@ -124,7 +126,7 @@ const UserDashboard = () => {
                                         <div className="statistics-grid flex-fill">
                                             <div className="statistics-content">
                                                 <h3>06</h3>
-                                                <p>Total Lessons</p>
+                                                <p>{t('dashboard.totalLessons')}</p>
                                             </div>
                                             <div className="statistics-icon">
                                                 <ImageWithBasePath
@@ -138,7 +140,7 @@ const UserDashboard = () => {
                                         <div className="statistics-grid flex-fill">
                                             <div className="statistics-content">
                                                 <h3>$45,056</h3>
-                                                <p>Payments</p>
+                                                <p>{t('dashboard.payments')}</p>
                                             </div>
                                             <div className="statistics-icon">
                                                 <ImageWithBasePath
@@ -153,13 +155,131 @@ const UserDashboard = () => {
                         </div>
                     </div>
                     {/* /Statistics Card */}
+
+                    {/* M3 Dashboard Access Section */}
+                    {hasActiveSubscription && (
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <div className="card dashboard-card" style={{
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    border: 'none',
+                                    boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+                                }}>
+                                    <div className="card-body" style={{ padding: '2rem' }}>
+                                        <div className="row align-items-center">
+                                            <div className="col-lg-8 col-md-7">
+                                                <div style={{ color: 'white' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                        <div style={{
+                                                            width: '60px',
+                                                            height: '60px',
+                                                            background: 'rgba(255, 255, 255, 0.2)',
+                                                            borderRadius: '15px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            marginRight: '1.5rem',
+                                                            backdropFilter: 'blur(10px)'
+                                                        }}>
+                                                            <i className="feather-award" style={{ fontSize: '32px' }}></i>
+                                                        </div>
+                                                        <div>
+                                                            <h3 style={{ 
+                                                                color: 'white', 
+                                                                marginBottom: '0.5rem',
+                                                                fontSize: '1.75rem',
+                                                                fontWeight: 'bold'
+                                                            }}>
+                                                                🎉 {t('dashboard.premiumAccessTitle')}
+                                                            </h3>
+                                                            <p style={{ 
+                                                                color: 'rgba(255, 255, 255, 0.9)', 
+                                                                marginBottom: '0',
+                                                                fontSize: '1.1rem'
+                                                            }}>
+                                                                {t('dashboard.premiumAccessSubtitle')}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ 
+                                                        background: 'rgba(255, 255, 255, 0.1)', 
+                                                        padding: '1rem 1.5rem',
+                                                        borderRadius: '10px',
+                                                        marginBottom: '1.5rem',
+                                                        backdropFilter: 'blur(10px)'
+                                                    }}>
+                                                        <p style={{ 
+                                                            color: 'rgba(255, 255, 255, 0.95)',
+                                                            marginBottom: '0',
+                                                            lineHeight: '1.6'
+                                                        }}>
+                                                            {t('dashboard.premiumAccessDescription')}
+                                                        </p>
+                                                    </div>
+                                                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <i className="feather-check-circle" style={{ marginRight: '0.5rem', fontSize: '20px' }}></i>
+                                                            <span style={{ fontSize: '0.95rem' }}>{t('dashboard.advancedAnalytics')}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <i className="feather-check-circle" style={{ marginRight: '0.5rem', fontSize: '20px' }}></i>
+                                                            <span style={{ fontSize: '0.95rem' }}>{t('dashboard.premiumFeatures')}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <i className="feather-check-circle" style={{ marginRight: '0.5rem', fontSize: '20px' }}></i>
+                                                            <span style={{ fontSize: '0.95rem' }}>{t('dashboard.prioritySupport')}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-4 col-md-5 text-center text-md-end">
+                                                <a
+                                                    href="http://localhost:5173"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="btn"
+                                                    style={{
+                                                        background: 'white',
+                                                        color: '#667eea',
+                                                        padding: '1rem 2.5rem',
+                                                        borderRadius: '10px',
+                                                        fontWeight: 'bold',
+                                                        fontSize: '1.1rem',
+                                                        border: 'none',
+                                                        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+                                                        transition: 'all 0.3s ease',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.75rem'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(-3px)';
+                                                        e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.3)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+                                                    }}
+                                                >
+                                                    <i className="feather-external-link" style={{ fontSize: '20px' }}></i>
+                                                    <span>{t('dashboard.accessM3Dashboard')}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {/* /M3 Dashboard Access Section */}
+
                     {/* Appointment */}
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="card dashboard-card">
                                 <div className="card-header">
-                                    <h4>Todays Appointment</h4>
-                                    <p>Your Personal Badminton Schedule</p>
+                                    <h4>{t('dashboard.todaysAppointment')}</h4>
+                                    <p>{t('dashboard.appointmentSubtitle')}</p>
                                 </div>
                                 <div className="appointment-info">
                                     <ul>
@@ -172,29 +292,29 @@ const UserDashboard = () => {
                                                     />
                                                 </div>
                                                 <div className="appointment-content">
-                                                    <h6>Intitulé du Pack</h6>
+                                                    <h6>{t('dashboard.packTitle')}</h6>
                                                     <p>Standard Synthetic Court 1</p>
                                                 </div>
                                             </div>
                                         </li>
                                         <li>
-                                            <h6>Appointment Date</h6>
+                                            <h6>{t('dashboard.appointmentDate')}</h6>
                                             <p>Mon, Jul 11</p>
                                         </li>
                                         <li>
-                                            <h6>Start Time</h6>
+                                            <h6>{t('dashboard.startTime')}</h6>
                                             <p>05:25 AM</p>
                                         </li>
                                         <li>
-                                            <h6>Appointment End Time</h6>
+                                            <h6>{t('dashboard.appointmentEndTime')}</h6>
                                             <p>06:25 AM</p>
                                         </li>
                                         <li>
-                                            <h6>Additional Guests</h6>
+                                            <h6>{t('dashboard.additionalGuests')}</h6>
                                             <p>4</p>
                                         </li>
                                         <li>
-                                            <h6>Location</h6>
+                                            <h6>{t('dashboard.location')}</h6>
                                             <p>Sant Marco</p>
                                         </li>
                                     </ul>
@@ -209,8 +329,8 @@ const UserDashboard = () => {
                             <div className="card dashboard-card flex-fill">
                                 <div className="card-header card-header-info">
                                     <div className="card-header-inner">
-                                        <h4>Mes Packs</h4>
-                                        <p>Court Reservations Made Easy</p>
+                                        <h4>{t('dashboard.myPacks')}</h4>
+                                        <p>{t('dashboard.myPacksSubtitle')}</p>
                                     </div>
                                     <div className="card-header-btns">
                                         <nav>

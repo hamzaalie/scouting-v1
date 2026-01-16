@@ -6,7 +6,7 @@ import { all_routes } from '../router/all_routes';
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(10);
   const [showContent, setShowContent] = useState(false);
   const route = all_routes;
 
@@ -16,7 +16,7 @@ const PaymentSuccess = () => {
     // Trigger animation
     setTimeout(() => setShowContent(true), 100);
 
-    // Show success message
+    // Show success message (only once on mount)
     toast.success('Payment completed successfully! Your subscription is now active.');
 
     // Countdown timer
@@ -32,10 +32,17 @@ const PaymentSuccess = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [navigate, route]);
+  }, []); // Empty dependency array - runs only on mount
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-4">
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #f3e5f5 100%)',
+      padding: '20px'
+    }}>
       <style>
         {`
           @keyframes checkmark {
@@ -72,55 +79,99 @@ const PaymentSuccess = () => {
             }
           }
 
-          .animate-checkmark {
+          .payment-success-checkmark {
             stroke-dasharray: 100;
             stroke-dashoffset: 100;
             animation: checkmark 0.8s ease-out 0.3s forwards;
           }
 
-          .animate-scale-in {
+          .payment-success-scale-in {
             animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
           }
 
-          .animate-slide-up {
+          .payment-success-slide-up {
             animation: slideUp 0.6s ease-out;
           }
 
-          .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #ffd700;
-            animation: confetti-fall 3s ease-out forwards;
+          .payment-success-container {
+            opacity: ${showContent ? '1' : '0'};
+            transform: ${showContent ? 'scale(1)' : 'scale(0.95)'};
+            transition: all 0.5s ease;
           }
 
-          @keyframes confetti-fall {
+          @keyframes spin {
             to {
-              transform: translateY(100vh) rotate(360deg);
-              opacity: 0;
+              transform: rotate(360deg);
             }
+          }
+
+          .payment-success-spinner {
+            animation: spin 1s linear infinite;
           }
         `}
       </style>
 
-      <div className={`max-w-lg w-full bg-white rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 ${showContent ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+      <div className="payment-success-container" style={{
+        maxWidth: '600px',
+        width: '100%',
+        background: 'white',
+        borderRadius: '20px',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+        overflow: 'hidden'
+      }}>
         {/* Header with gradient */}
-        <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-8 pt-12 pb-8 text-center relative overflow-hidden">
+        <div style={{
+          background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)',
+          padding: '48px 32px 32px',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
           {/* Decorative circles */}
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-10 rounded-full -mr-20 -mt-20"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -ml-16 -mb-16"></div>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '160px',
+            height: '160px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '50%',
+            marginRight: '-80px',
+            marginTop: '-80px'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '128px',
+            height: '128px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '50%',
+            marginLeft: '-64px',
+            marginBottom: '-64px'
+          }}></div>
 
           {/* Success Icon */}
-          <div className="relative animate-scale-in">
-            <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-white shadow-lg mb-6">
+          <div style={{ position: 'relative' }} className="payment-success-scale-in">
+            <div style={{
+              margin: '0 auto 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '96px',
+              width: '96px',
+              borderRadius: '50%',
+              background: 'white',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+            }}>
               <svg
-                className="h-16 w-16 text-green-500"
+                style={{ height: '64px', width: '64px', color: '#10b981' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path
-                  className="animate-checkmark"
+                  className="payment-success-checkmark"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={3}
@@ -130,37 +181,80 @@ const PaymentSuccess = () => {
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-2 animate-slide-up">
+          <h1 className="payment-success-slide-up" style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: 'white',
+            marginBottom: '8px'
+          }}>
             Payment Successful!
           </h1>
           
-          <p className="text-green-50 text-lg animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <p className="payment-success-slide-up" style={{
+            color: 'rgba(255,255,255,0.95)',
+            fontSize: '1.125rem',
+            animationDelay: '0.1s'
+          }}>
             🎉 Welcome to Premium
           </p>
         </div>
 
         {/* Content */}
-        <div className="px-8 py-8">
-          <p className="text-gray-700 text-center mb-6 text-lg">
+        <div style={{ padding: '32px' }}>
+          <p style={{
+            color: '#374151',
+            textAlign: 'center',
+            marginBottom: '24px',
+            fontSize: '1.125rem'
+          }}>
             Thank you for your subscription! Your payment has been processed successfully.
           </p>
 
           {transactionId && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-5 mb-6 border border-gray-200 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Transaction ID</p>
-                  <p className="text-sm font-mono text-gray-900 break-all">{transactionId}</p>
+            <div className="payment-success-slide-up" style={{
+              background: 'linear-gradient(90deg, #f9fafb 0%, #f3f4f6 100%)',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '24px',
+              border: '1px solid #e5e7eb',
+              animationDelay: '0.2s'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: '#6b7280',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '4px'
+                  }}>Transaction ID</p>
+                  <p style={{
+                    fontSize: '0.875rem',
+                    fontFamily: 'monospace',
+                    color: '#111827',
+                    wordBreak: 'break-all'
+                  }}>{transactionId}</p>
                 </div>
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(transactionId);
                     toast.success('Transaction ID copied!');
                   }}
-                  className="ml-3 p-2 hover:bg-white rounded-lg transition-colors"
+                  style={{
+                    marginLeft: '12px',
+                    padding: '8px',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'background 0.3s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'white'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                   title="Copy to clipboard"
                 >
-                  <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg style={{ height: '20px', width: '20px', color: '#4b5563' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                 </button>
@@ -169,22 +263,60 @@ const PaymentSuccess = () => {
           )}
 
           {/* Benefits List */}
-          <div className="space-y-3 mb-6 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+          <div className="payment-success-slide-up" style={{
+            marginBottom: '24px',
+            animationDelay: '0.3s'
+          }}>
             {[
-              { icon: '🎯', text: 'Your subscription is now active', color: 'from-green-500 to-emerald-500' },
-              { icon: '🚀', text: 'Full access to all premium features', color: 'from-blue-500 to-cyan-500' },
-              { icon: '📧', text: 'Confirmation email has been sent', color: 'from-purple-500 to-pink-500' }
+              { icon: '🎯', text: 'Your subscription is now active', color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
+              { icon: '🚀', text: 'Full access to M3 Dashboard and all premium features', color: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)' },
+              { icon: '📧', text: 'Confirmation email has been sent', color: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)' }
             ].map((item, index) => (
               <div 
                 key={index} 
-                className="flex items-center p-4 bg-white rounded-xl border-2 border-gray-100 hover:border-gray-200 transition-all hover:shadow-md"
-                style={{ animationDelay: `${0.4 + index * 0.1}s` }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '16px',
+                  background: 'white',
+                  borderRadius: '12px',
+                  border: '2px solid #f3f4f6',
+                  marginBottom: '12px',
+                  transition: 'all 0.3s',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#e5e7eb';
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#f3f4f6';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               >
-                <div className={`flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center text-white text-xl shadow-lg`}>
+                <div style={{
+                  flexShrink: 0,
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '8px',
+                  background: item.color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '1.25rem',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }}>
                   {item.icon}
                 </div>
-                <p className="ml-4 text-gray-800 font-medium">{item.text}</p>
-                <svg className="ml-auto h-5 w-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <p style={{
+                  marginLeft: '16px',
+                  marginRight: 'auto',
+                  color: '#1f2937',
+                  fontWeight: '500',
+                  marginBottom: 0
+                }}>{item.text}</p>
+                <svg style={{ height: '20px', width: '20px', color: '#10b981', flexShrink: 0 }} fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -192,53 +324,206 @@ const PaymentSuccess = () => {
           </div>
 
           {/* Countdown Badge */}
-          <div className="flex items-center justify-center mb-6 animate-slide-up" style={{ animationDelay: '0.7s' }}>
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-full px-6 py-3 flex items-center space-x-2">
-              <svg className="h-5 w-5 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <div className="payment-success-slide-up" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '24px',
+            animationDelay: '0.7s'
+          }}>
+            <div style={{
+              background: 'linear-gradient(90deg, #dbeafe 0%, #e0e7ff 100%)',
+              border: '2px solid #93c5fd',
+              borderRadius: '9999px',
+              padding: '12px 24px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <svg className="payment-success-spinner" style={{ height: '20px', width: '20px', color: '#2563eb' }} fill="none" viewBox="0 0 24 24">
+                <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <p className="text-sm font-semibold text-blue-900">
-                Redirecting in <span className="text-2xl font-bold text-blue-600 mx-1">{countdown}</span> seconds
+              <p style={{
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                marginBottom: 0
+              }}>
+                Redirecting in <span style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  color: '#2563eb',
+                  margin: '0 4px'
+                }}>{countdown}</span> seconds
               </p>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-3 animate-slide-up" style={{ animationDelay: '0.8s' }}>
-            <button
-              onClick={() => navigate(route.userDashboard)}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-4 px-6 rounded-xl transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Go to Dashboard Now
-            </button>
-            
-            <button
-              onClick={() => navigate(route.userSubscription)}
-              className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-all font-medium hover:shadow-md"
-            >
-              View Subscription Details
-            </button>
+          {/* M3 Dashboard Access Notice */}
+          <div className="payment-success-slide-up" style={{
+            background: 'linear-gradient(135deg, #e0f2fe 0%, #dbeafe 50%, #e0f2fe 100%)',
+            border: '2px solid #7dd3fc',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            animationDelay: '0.7s'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+              <div style={{ flexShrink: 0 }}>
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }}>
+                  <svg style={{ height: '32px', width: '32px', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: 'bold',
+                  color: '#111827',
+                  marginBottom: '8px'
+                }}>🎉 You Now Have Access to M3 Dashboard!</h3>
+                <p style={{
+                  color: '#374151',
+                  fontSize: '0.875rem',
+                  lineHeight: '1.5',
+                  marginBottom: 0
+                }}>
+                  Your premium subscription includes full access to our advanced M3 Dashboard. Please login there to unlock powerful analytics, advanced features, and enhanced management tools.
+                </p>
+              </div>
+            </div>
+          </div>
 
+          {/* Action Buttons */}
+          <div className="payment-success-slide-up" style={{
+            animationDelay: '0.8s'
+          }}>
             <a
               href="http://localhost:5173"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-6 rounded-xl transition-all font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
+              style={{
+                display: 'flex',
+                width: '100%',
+                background: 'linear-gradient(90deg, #2563eb 0%, #6366f1 100%)',
+                color: 'white',
+                padding: '16px 24px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                fontSize: '1.125rem',
+                boxShadow: '0 10px 15px rgba(37, 99, 235, 0.3)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                textDecoration: 'none',
+                marginBottom: '12px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 15px 25px rgba(37, 99, 235, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 10px 15px rgba(37, 99, 235, 0.3)';
+              }}
             >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style={{ height: '24px', width: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              <span>Login to M3 Dashboard</span>
+              <span>Access M3 Dashboard Now</span>
             </a>
+
+            <button
+              onClick={() => navigate(route.userDashboard)}
+              style={{
+                display: 'block',
+                width: '100%',
+                background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                boxShadow: '0 4px 6px rgba(16, 185, 129, 0.3)',
+                border: 'none',
+                cursor: 'pointer',
+                marginBottom: '12px',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 12px rgba(16, 185, 129, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px rgba(16, 185, 129, 0.3)';
+              }}
+            >
+              Go to V1 Dashboard
+            </button>
+            
+            <button
+              onClick={() => navigate(route.userSubscription)}
+              style={{
+                display: 'block',
+                width: '100%',
+                background: 'white',
+                border: '2px solid #d1d5db',
+                color: '#374151',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#9ca3af';
+                e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#d1d5db';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              View Subscription Details
+            </button>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 px-8 py-4 text-center border-t border-gray-200">
-          <p className="text-xs text-gray-500">
+        <div style={{
+          background: '#f9fafb',
+          padding: '16px 32px',
+          textAlign: 'center',
+          borderTop: '1px solid #e5e7eb'
+        }}>
+          <p style={{
+            fontSize: '0.75rem',
+            color: '#6b7280',
+            marginBottom: 0
+          }}>
             Need help? Contact our support team at{' '}
-            <a href="mailto:support@scoutung.com" className="text-blue-600 hover:text-blue-700 font-medium">
+            <a href="mailto:support@scoutung.com" style={{
+              color: '#2563eb',
+              fontWeight: '500',
+              textDecoration: 'none'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#1d4ed8'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#2563eb'}
+            >
               support@scoutung.com
             </a>
           </p>

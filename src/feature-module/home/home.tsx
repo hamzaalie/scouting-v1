@@ -14,8 +14,34 @@ import {formatPrice} from "../../helpers/input.helper";
 import {paymentService} from "../../helpers/payment.service";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
+
+interface CinetPayConfig {
+  apikey: string;
+  site_id: string;
+  notify_url: string;
+  return_url: string;
+  cancel_url: string;
+}
+
+interface PaymentData {
+  transactionId: string;
+  amount: number;
+  plan: string;
+  user: { email: string; id: string };
+  cinetpayConfig: CinetPayConfig;
+}
+
+interface CinetPayResponse {
+  status: string;
+}
+
+interface CinetPayError {
+  message?: string;
+}
 
 const Home = () => {
+    const {t} = useTranslation();
     const routes = all_routes;
     const navigate = useNavigate();
 
@@ -47,33 +73,97 @@ const Home = () => {
         }));
     };
 
-    const handleChoicePack = (chosenPack: tPack) => {
+    const handleChoicePack = async (chosenPack: tPack) => {
         // Prevent multiple clicks
         if (loading) return;
-        setLoading(true);
 
-        // Use our payment service to handle the flow
-        //! TODO : Change price to real one after all test period
-        const redirectUrl = paymentService.initiatePaymentProcess({...chosenPack, price: 100});
-
-        if (localStorageFunctions.isUserLoggedIn()) {
-            // User is logged in, show success toast and redirect to payment
-            toast.success("Vous serez redirigé(e) vers la page de paiement...", {
-                toastId: "redirectToast",
+        // Check if user is logged in
+        if (!localStorageFunctions.isUserLoggedIn()) {
+            toast.warning("Please login to subscribe to a plan", {
+                toastId: "loginRequired",
                 theme: "colored",
             });
             setTimeout(() => {
-                //! TODO : Change price to real one after all test period
-                navigate(redirectUrl, {state: {...chosenPack, price: 100}});
-                setLoading(false);
-            }, 1500);
-        } else {
-            // User is not logged in, redirect to login page
-            // The toast is already shown by the paymentService
-            setTimeout(() => {
-                navigate(redirectUrl);
-                setLoading(false);
+                navigate(routes.login);
             }, 1000);
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            // Call payments API to initiate payment
+            const response = await fetch('http://localhost:3000/api/payments/initiate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorageFunctions.getToken()}`
+                },
+                body: JSON.stringify({
+                    planId: chosenPack.id,
+                    amount: chosenPack.price
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to initiate payment');
+            }
+
+            const paymentData = await response.json();
+            
+            toast.success('Redirecting to payment gateway...');
+            
+            // Redirect to CinetPay
+            redirectToCinetPay(paymentData);
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            toast.error('Payment initiation failed. Please try again.');
+            setLoading(false);
+        }
+    };
+
+    const redirectToCinetPay = (paymentData: PaymentData) => {
+        const { transactionId, amount, plan, user, cinetpayConfig } = paymentData;
+
+        // CinetPay Seamless Integration
+        const win = window as typeof window & { CinetPay: any };
+        if (typeof win.CinetPay !== 'undefined') {
+            win.CinetPay.setConfig({
+                apikey: cinetpayConfig.apikey,
+                site_id: cinetpayConfig.site_id,
+                notify_url: cinetpayConfig.notify_url,
+                mode: 'PRODUCTION'
+            });
+
+            win.CinetPay.getCheckout({
+                transaction_id: transactionId,
+                amount: amount,
+                currency: 'XOF',
+                channels: 'ALL',
+                description: `Subscription ${plan}`,
+                customer_name: user.email.split('@')[0],
+                customer_surname: user.email.split('@')[0],
+                customer_email: user.email,
+            });
+
+            win.CinetPay.waitResponse((data: CinetPayResponse) => {
+                if (data.status === 'REFUSED') {
+                    toast.error('Payment was cancelled');
+                    setLoading(false);
+                } else if (data.status === 'ACCEPTED') {
+                    toast.success('Payment successful! Redirecting...');
+                    window.location.href = cinetpayConfig.return_url;
+                }
+            });
+
+            win.CinetPay.onError((data: CinetPayError) => {
+                toast.error(data.message || 'Payment error occurred');
+                setLoading(false);
+            });
+        } else {
+            toast.error('Payment system not loaded. Please refresh the page.');
+            setLoading(false);
         }
     };
 
@@ -138,16 +228,14 @@ const Home = () => {
                             <div className="col-lg-7 col-md-10 mx-auto">
                                 <div className="section-search aos" data-aos="fade-up">
                                     <h1>
-                                        Bienvenue{" "}
+                                        {t('home.heroTitle').split(',')[0]}{" "}
                                         <span style={{textTransform: "lowercase", color: "#fff"}}>
-                                            sur
+                                            {t('home.heroTitle').split(' ')[1]}
                                         </span>{" "}
-                                        <span>IDA</span>, Intelligence Data Analytics
+                                        <span>IDA</span>, {t('home.heroTitle').split(', ')[1]}
                                     </h1>
                                     <p className="sub-info">
-                                        Nous redéfinissons l&apos;avenir du football en Côte
-                                        d&apos;Ivoire grâce à l&apos;exploitation des données
-                                        sportives avancées.
+                                        {t('home.heroSubtitle')}
                                     </p>
                                 </div>
                             </div>
@@ -170,11 +258,10 @@ const Home = () => {
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
                         <h2>
-                            En <span>bref...</span>
+                            {t('home.briefTitle').split('...')[0]} <span>...</span>
                         </h2>
                         <p className="sub-title">
-                            Notre projet se concentre sur la collecte et l&apos;analyse de données
-                            précises et détaillées, directement issues des matchs.
+                            {t('home.briefSubtitle')}
                         </p>
                     </div>
                     <div className="row justify-content-center ">
@@ -190,16 +277,10 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>Une technologie puissante</Link>
+                                        <Link to={"#"}>{t('home.tech1Title')}</Link>
                                     </h5>
                                     <p>
-                                        Nous utilisons les dernières technologies de caméras IA pour
-                                        capturer chaque instant du jeu, permettant une analyse
-                                        approfondie des performances des joueurs et des équipes.{" "}
-                                        <br />
-                                        Ces outils innovants offrent une vue d&apos;ensemble unique,
-                                        capturant des angles impossibles à obtenir par les moyens
-                                        traditionnels.
+                                        {t('home.tech1Content')}
                                     </p>
                                 </div>
                             </div>
@@ -216,17 +297,13 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}> Des performances optimales obtenues</Link>
+                                        <Link to={"#"}>{t('home.tech2Title')}</Link>
                                     </h5>
                                     <p>
-                                        Nos équipes d&apos;experts transforment ces données en
-                                        informations exploitables, offrant aux clubs, entraîneurs,
-                                        et agents des insights précis pour améliorer les stratégies
-                                        de jeu, optimiser les performances des joueurs, et
-                                        identifier les talents prometteurs.
+                                        {t('home.tech2Content')}
                                         <br />
                                         <span style={{color: "#74aef5"}} className="fw-bold">
-                                            Avec IDA, chaque détail compte.
+                                            {t('home.tech2Highlight')}
                                         </span>
                                     </p>
                                 </div>
@@ -244,19 +321,15 @@ const Home = () => {
                                 </div>
                                 <div className="work-content">
                                     <h5>
-                                        <Link to={"#"}>Un succès accéléré</Link>
+                                        <Link to={"#"}>{t('home.tech3Title')}</Link>
                                     </h5>
                                     <p>
-                                        Que vous soyez un club à la recherche d&apos;un avantage
-                                        compétitif, un agent souhaitant repérer le prochain grand
-                                        talent, ou un passionné du football désireux de comprendre
-                                        le jeu sous un nouvel angle, <br />
+                                        {t('home.tech3Content')} <br />
                                         <span style={{color: "#74aef5"}} className="fw-bold">
-                                            IDA est votre partenaire idéal.
+                                            {t('home.tech3Highlight')}
                                         </span>{" "}
                                         <br />
-                                        Découvrez comment la puissance des données peut transformer
-                                        le football ivoirien.
+                                        {t('home.tech3Footer')}
                                     </p>
                                 </div>
                             </div>
@@ -270,12 +343,10 @@ const Home = () => {
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
                         <h2>
-                            Qu&apos;est-ce-que <span>IDA</span> ?
+                            {t('home.whatIsTitle').split('IDA')[0]} <span>IDA</span> ?
                         </h2>
                         <p className="sub-title">
-                            IDA est un projet innovant dédié à la collecte, l&apos;analyse, et
-                            l&apos;exploitation des données sportives en Côte d&apos;Ivoire,
-                            principalement dans le football
+                            {t('home.whatIsSubtitle')}
                         </p>
                     </div>
                     <div className="row">
@@ -292,9 +363,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.expertise}>Notre Expertise</Link>
+                                        <Link to={routes.expertise}>{t('home.ourExpertise')}</Link>
                                     </h4>
-                                    <Link to={routes.expertise}>Voir plus</Link>
+                                    <Link to={routes.expertise}>{t('home.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -311,9 +382,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.mission}>Notre Mission</Link>
+                                        <Link to={routes.mission}>{t('home.ourMission')}</Link>
                                     </h4>
-                                    <Link to={routes.mission}>Voir plus</Link>
+                                    <Link to={routes.mission}>{t('home.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -330,9 +401,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.whyIDA}>Pourquoi IDA ?</Link>
+                                        <Link to={routes.whyIDA}>{t('home.whyIDA')}</Link>
                                     </h4>
-                                    <Link to={routes.whyIDA}>Voir plus</Link>
+                                    <Link to={routes.whyIDA}>{t('home.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -349,9 +420,9 @@ const Home = () => {
                                 </div>
                                 <div className="service-content">
                                     <h4>
-                                        <Link to={routes.team}>Notre Équipe</Link>
+                                        <Link to={routes.team}>{t('home.ourTeam')}</Link>
                                     </h4>
-                                    <Link to={routes.team}>Voir plus</Link>
+                                    <Link to={routes.team}>{t('home.seeMore')}</Link>
                                 </div>
                             </div>
                         </div>
@@ -375,11 +446,9 @@ const Home = () => {
             <section className="section convenient-section">
                 <div className="container">
                     <div className="convenient-content aos" data-aos="fade-up">
-                        <h2>Une Vision pour Transformer le Football en Côte d&apos;Ivoire</h2>
+                        <h2>{t('home.visionTitle')}</h2>
                         <p>
-                            Ensemble, nous partageons une vision commune : élever le football en
-                            Côte d&apos;Ivoire à un nouveau niveau grâce à l&apos;innovation et aux
-                            données.
+                            {t('home.visionSubtitle')}
                         </p>
                     </div>
                     <div className="convenient-btns aos" data-aos="fade-up">
@@ -507,35 +576,34 @@ const Home = () => {
                 <div className="container">
                     <div className="section-heading aos" data-aos="fade-up">
                         <h2>
-                            Nous avons de <span>super Packs pour vous</span>
+                            {t('home.title').split('super')[0]} <span>super {t('home.title').split('super')[1]}</span>
                         </h2>
                         <p className="sub-title">
-                            Nous proposons des services sur mesure en fonction de vos besoins
-                            spécifiques.
+                            {t('home.subtitle')}
                         </p>
                     </div>
                     <div hidden className="interset-btn aos" data-aos="fade-up">
                         <div className="status-toggle d-inline-flex align-items-center">
-                            National{" "}
+                            {t('home.local')}
                             <InputSwitch
                                 key={"packCountryMode"}
                                 style={{margin: "0 10px"}}
                                 checked={countryModechecked.checked}
                                 onChange={() => handleSwitchCountry()}
                             />
-                            International
+                            {t('home.international')}
                         </div>
                     </div>
                     <div className="interset-btn aos" data-aos="fade-up">
                         <div className="status-toggle d-inline-flex align-items-center">
-                            Mensuel{" "}
+                            {t('home.monthly')}{" "}
                             <InputSwitch
                                 key={"packPeriod"}
                                 style={{margin: "0 10px"}}
                                 checked={periodChecked.checked}
                                 onChange={() => handleSwitchPeriod()}
                             />
-                            Annuel
+                            {t('home.annual')}
                         </div>
                     </div>
                     <div className="price-wrap aos" data-aos="fade-up">
@@ -545,7 +613,7 @@ const Home = () => {
                                     <div className="spinner-border text-primary" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
-                                    <p className="mt-2">Chargement des packs...</p>
+                                    <p className="mt-2">{t('home.loading')}</p>
                                 </div>
                             ) : packsToDisplay.length <= 0 ? (
                                 <div className="text-center">
@@ -585,51 +653,35 @@ const Home = () => {
 
                                                 <h3>{pack.title}</h3>
                                                 <span hidden={!pack.title.includes("Or")}>
-                                                    Recommandé
+                                                    {t('home.recommended')}
                                                 </span>
                                             </div>
                                             <div className="price-body">
                                                 <div className="per-month">
                                                     <h2>
                                                         <span>
-                                                            {formatPrice(
-                                                                pack.currency === "XOF"
-                                                                    ? "fr-FR"
-                                                                    : "en-US",
-                                                                pack.price,
-                                                                pack.currency
-                                                            )}
+                                                            {pack.price}
                                                         </span>
-
-                                                        {pack.currency === "EUR" ? (
-                                                            <sup>&euro;</sup>
-                                                        ) : pack.currency === "USD" ? (
-                                                            <sup>&dollar;</sup>
-                                                        ) : (
-                                                            <sup>FCFA</sup>
-                                                        )}
+                                                        <sup>{pack.currency}</sup>
                                                     </h2>
                                                     <span>
-                                                        Par{" "}
+                                                        {t('home.per')}{" "}
                                                         {pack.period.replace(
                                                             pack.period[0],
                                                             pack.period[0].toUpperCase()
                                                         )}{" "}
-                                                        HT
+                                                        {t('home.beforeTax')}
                                                     </span>
                                                 </div>
                                                 <div className="features-price-list">
-                                                    <h5>Options</h5>
-                                                    <p>Vidéos</p>
+                                                    <h6 className="text-muted mb-3">{pack.target ? t(pack.target) : ''}</h6>
                                                     <ul>
-                                                        <li className="active">
-                                                            <i className="feather-check-circle" />
-                                                            Inclus : Championnat de U20
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="feather-check-circle" />
-                                                            Inclus : Analyse Data (Données){" "}
-                                                        </li>
+                                                        {pack.features && pack.features.map((feature: string, idx: number) => (
+                                                            <li key={idx} className="active">
+                                                                <i className="feather-check-circle text-success" />
+                                                                {t(feature)}
+                                                            </li>
+                                                        ))}
                                                     </ul>
                                                 </div>
                                                 <div className="price-choose">
@@ -641,10 +693,10 @@ const Home = () => {
                                                         {loading ? (
                                                             <>
                                                                 <i className="feather-loader me-2"></i>
-                                                                Traitement...
+                                                                {t('home.processing')}
                                                             </>
                                                         ) : (
-                                                            "Choisissez votre pack"
+                                                            t('home.choosePack')
                                                         )}
                                                     </button>
                                                 </div>

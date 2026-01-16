@@ -5,12 +5,17 @@ import ImageWithBasePath from "../../core/data/img/ImageWithBasePath";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
 import {toast} from "react-toastify";
 import {idaSportsUserInterface} from "../../core/data/interface/model";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
     const routes = all_routes;
     const location = useLocation();
+    const { isAuthenticated, logout: authLogout } = useAuth();
     const isUserConnected: idaSportsUserInterface = localStorageFunctions.getUser();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         // Fermer le menu mobile lors du changement de route
@@ -19,7 +24,7 @@ const Header = () => {
 
     const header = [
         {
-            tittle: "Accueil",
+            tittle: t('nav.home'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.home,
@@ -28,7 +33,7 @@ const Header = () => {
             menuId: "homePage",
         },
         {
-            tittle: "À propos de nous",
+            tittle: t('nav.about'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.aboutUs,
@@ -37,7 +42,7 @@ const Header = () => {
             menuId: "aboutPage",
         },
         {
-            tittle: "Packs",
+            tittle: t('nav.packs'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.pricing,
@@ -46,7 +51,7 @@ const Header = () => {
             menuId: "packsPage",
         },
         {
-            tittle: "FAQ",
+            tittle: t('nav.faq'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.faq,
@@ -55,7 +60,7 @@ const Header = () => {
             menuId: "faqPage",
         },
         {
-            tittle: "Nous contacter",
+            tittle: t('nav.contact'),
             showAsTab: false,
             separateRoute: true,
             routes: routes.contactUs,
@@ -69,12 +74,18 @@ const Header = () => {
         background: location.pathname.includes(routes.home) ? "#61bfce" : "#74aef5",
     };
 
-    function handleLogout(event: React.MouseEvent<HTMLElement>): void {
+    async function handleLogout(event: React.MouseEvent<HTMLElement>): Promise<void> {
         event.preventDefault();
-        if (isUserConnected?.firstName) {
-            localStorageFunctions.removeToken();
-            localStorageFunctions.removeUser();
-            window.location.href = routes.login;
+        if (isAuthenticated) {
+            try {
+                await authLogout();
+                window.location.href = routes.login;
+            } catch (error) {
+                toast.error("Erreur lors de la déconnexion", {
+                    toastId: "logoutError",
+                    theme: "colored",
+                });
+            }
         } else {
             toast.info("Veuillez vous connecter.", {
                 toastId: "defaultToast",
@@ -214,17 +225,17 @@ const Header = () => {
                                 </React.Fragment>
                             ))}
 
-                            {isUserConnected && isUserConnected?.firstName && (
+                            {isAuthenticated && (
                                 <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
                                     <li className="nav-item">
                                         <Link
                                             className="nav-link btn-sm btn-secondary"
-                                            to={routes.userBookings}
+                                            to={routes.userDashboard}
                                         >
                                             <span>
                                                 <i className="feather-menu" />
                                             </span>
-                                            Tableau de Bord
+                                            {t('nav.dashboard')}
                                         </Link>
                                     </li>
                                     <li className="nav-item">
@@ -233,13 +244,13 @@ const Header = () => {
                                                 <span>
                                                     <i className="feather-log-out" />
                                                 </span>
-                                                Se déconnecter
+                                                {t('nav.logout')}
                                             </Link>{" "}
                                         </div>
                                     </li>
                                 </div>
                             )}
-                            {!isUserConnected?.firstName && (
+                            {!isAuthenticated && (
                                 <div style={!isMobileMenuOpen ? {display: "none"} : {}}>
                                     <li className="nav-item">
                                         <Link
@@ -249,7 +260,7 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-users" />
                                             </span>
-                                            Se connecter / S&apos;inscrire
+                                            {t('nav.login')}
                                         </Link>{" "}
                                     </li>
                                 </div>
@@ -260,17 +271,21 @@ const Header = () => {
                         className="nav header-navbar-rht"
                         style={isMobileMenuOpen ? {display: "none"} : {}}
                     >
-                        {isUserConnected && isUserConnected?.firstName && (
+                        {/* Language Switcher */}
+                        <li className="nav-item" style={{ marginRight: '15px' }}>
+                            <LanguageSwitcher />
+                        </li>
+                        {isAuthenticated && (
                             <>
                                 <li className="nav-item">
                                     <Link
                                         className="nav-link btn btn-secondary"
-                                        to={routes.userBookings}
+                                        to={routes.userDashboard}
                                     >
                                         <span>
                                             <i className="feather-menu" />
                                         </span>
-                                        Tableau de Bord
+                                        {t('nav.dashboard')}
                                     </Link>
                                 </li>
                                 <li className="nav-item">
@@ -279,20 +294,20 @@ const Header = () => {
                                             <span>
                                                 <i className="feather-log-out" />
                                             </span>
-                                            Se déconnecter
+                                            {t('nav.logout')}
                                         </Link>{" "}
                                     </div>
                                 </li>
                             </>
                         )}
-                        {!isUserConnected?.firstName && (
+                        {!isAuthenticated && (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link btn btn-secondary" to={routes.login}>
                                         <span>
                                             <i className="feather-users" />
                                         </span>
-                                        Se connecter / S&apos;inscrire
+                                        {t('nav.login')}
                                     </Link>{" "}
                                 </li>
                             </>

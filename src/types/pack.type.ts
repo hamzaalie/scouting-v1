@@ -3,11 +3,13 @@ export type tPack = {
     title: string;
     shortDesc?: string;
     description: string;
-    currency: "XOF" | "EUR" | "USD";
+    currency: "XOF" | "EUR" | "USD" | "$";
     period: "mois" | "année";
-    roleId: string;
+    roleId: string | number;
     price: number;
     option: "local" | "international";
+    target?: string;
+    features?: string[];
     createdAt?: string;
     updatedAt?: string;
 };

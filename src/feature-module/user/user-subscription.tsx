@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { subscriptionsAPI, paymentsAPI, authAPI } from '../../services/api.service';
 import { all_routes } from '../router/all_routes';
+import { useTranslation } from 'react-i18next';
 
 interface SubscriptionPlan {
   id: string;
@@ -56,6 +57,7 @@ interface AccountDetails {
 }
 
 const UserSubscription = () => {
+  const { t } = useTranslation();
   const route = all_routes;
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -552,7 +554,7 @@ const UserSubscription = () => {
                       {plan.features.map((feature, index) => (
                         <li key={index} className="mb-3">
                           <i className="feather-check-circle text-success me-2"></i>
-                          {feature}
+                          {t(feature)}
                         </li>
                       ))}
                     </ul>

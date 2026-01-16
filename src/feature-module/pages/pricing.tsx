@@ -6,11 +6,35 @@ import {InputSwitch} from "primereact/inputswitch";
 import {backendFunctions} from "../../helpers/backend.helper";
 import {tPack} from "../../types/pack.type";
 import {toast} from "react-toastify";
-import {formatPrice} from "../../helpers/input.helper";
 import {localStorageFunctions} from "../../helpers/localStorage.helper";
-import {paymentService} from "../../helpers/payment.service";
+import {useTranslation} from "react-i18next";
+
+interface CinetPayConfig {
+  apikey: string;
+  site_id: string;
+  notify_url: string;
+  return_url: string;
+  cancel_url: string;
+}
+
+interface PaymentData {
+  transactionId: string;
+  amount: number;
+  plan: string;
+  user: { email: string; id: string };
+  cinetpayConfig: CinetPayConfig;
+}
+
+interface CinetPayResponse {
+  status: string;
+}
+
+interface CinetPayError {
+  message?: string;
+}
 
 const Pricing = () => {
+    const {t} = useTranslation();
     const routes = all_routes;
     const navigate = useNavigate();
 
@@ -84,33 +108,98 @@ const Pricing = () => {
         );
     }, [countryModechecked, periodChecked, allPacks]);
 
-    const handleChoicePack = (chosenPack: tPack) => {
+    const handleChoicePack = async (chosenPack: tPack) => {
         // Prevent multiple clicks
         if (loading) return;
-        setLoading(true);
 
-        // Use our payment service to handle the flow
-        //! TODO : Change price to real one after all test period
-        const redirectUrl = paymentService.initiatePaymentProcess({...chosenPack, price: 100});
-
-        if (localStorageFunctions.isUserLoggedIn()) {
-            // User is logged in, show success toast and redirect to payment
-            toast.success("Vous serez redirigé(e) vers la page de paiement...", {
-                toastId: "redirectToast",
+        // Check if user is logged in
+        if (!localStorageFunctions.isUserLoggedIn()) {
+            toast.warning("Please login to subscribe to a plan", {
+                toastId: "loginRequired",
                 theme: "colored",
             });
             setTimeout(() => {
-                //! TODO : Change price to real one after all test period
-                navigate(redirectUrl, {state: {...chosenPack, price: 100}});
-                setLoading(false);
-            }, 1500);
-        } else {
-            // User is not logged in, redirect to login page
-            // The toast is already shown by the paymentService
-            setTimeout(() => {
-                navigate(redirectUrl);
-                setLoading(false);
+                navigate(routes.login);
             }, 1000);
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            // Call payments API to initiate payment
+            const response = await fetch('http://localhost:3000/api/payments/initiate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorageFunctions.getToken()}`
+                },
+                body: JSON.stringify({
+                    planId: chosenPack.id,
+                    amount: chosenPack.price
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to initiate payment');
+            }
+
+            const paymentData = await response.json() as PaymentData;
+            
+            toast.success('Redirecting to payment gateway...');
+            
+            // Redirect to CinetPay
+            redirectToCinetPay(paymentData);
+
+        } catch (error) {
+            const err = error instanceof Error ? error : new Error(String(error));
+            console.error('Payment error:', err);
+            toast.error('Payment initiation failed. Please try again.');
+            setLoading(false);
+        }
+    };
+
+    const redirectToCinetPay = (paymentData: PaymentData) => {
+        const { transactionId, amount, plan, user, cinetpayConfig } = paymentData;
+
+        // CinetPay Seamless Integration
+        const win = window as typeof window & { CinetPay: any };
+        if (typeof win.CinetPay !== 'undefined') {
+            win.CinetPay.setConfig({
+                apikey: cinetpayConfig.apikey,
+                site_id: cinetpayConfig.site_id,
+                notify_url: cinetpayConfig.notify_url,
+                mode: 'PRODUCTION'
+            });
+
+            win.CinetPay.getCheckout({
+                transaction_id: transactionId,
+                amount: amount,
+                currency: 'XOF',
+                channels: 'ALL',
+                description: `Subscription ${plan}`,
+                customer_name: user.email.split('@')[0],
+                customer_surname: user.email.split('@')[0],
+                customer_email: user.email,
+            });
+
+            win.CinetPay.waitResponse((data: CinetPayResponse) => {
+                if (data.status === 'REFUSED') {
+                    toast.error('Payment was cancelled');
+                    setLoading(false);
+                } else if (data.status === 'ACCEPTED') {
+                    toast.success('Payment successful! Redirecting...');
+                    window.location.href = cinetpayConfig.return_url;
+                }
+            });
+
+            win.CinetPay.onError((data: CinetPayError) => {
+                toast.error(data.message || 'Payment error occurred');
+                setLoading(false);
+            });
+        } else {
+            toast.error('Payment system not loaded. Please refresh the page.');
+            setLoading(false);
         }
     };
 
@@ -146,11 +235,10 @@ const Pricing = () => {
                         <div className="container">
                             <div className="section-heading aos" data-aos="fade-up">
                                 <h2>
-                                    Nous avons de <span>super Packs pour vous</span>
+                                    {t('home.title').split('super')[0]} <span>super {t('home.title').split('super')[1]}</span>
                                 </h2>
                                 <p className="sub-title">
-                                    Nous proposons des services sur mesure en fonction de vos
-                                    besoins spécifiques.
+                                    {t('home.subtitle')}
                                 </p>
                             </div>
                             <div hidden className="interset-btn aos" data-aos="fade-up">
@@ -167,14 +255,14 @@ const Pricing = () => {
                             </div>
                             <div className="interset-btn aos" data-aos="fade-up">
                                 <div className="status-toggle d-inline-flex align-items-center">
-                                    Mensuel{" "}
+                                    {t('home.monthly')}{" "}
                                     <InputSwitch
                                         key={"packPeriod"}
                                         style={{margin: "0 10px"}}
                                         checked={periodChecked.checked}
                                         onChange={() => handleSwitchPeriod()}
                                     />
-                                    Annuel
+                                    {t('home.annual')}
                                 </div>
                             </div>
                             <div className="price-wrap aos" data-aos="fade-up">
@@ -234,44 +322,28 @@ const Pricing = () => {
                                                         <div className="per-month">
                                                             <h2>
                                                                 <span>
-                                                                    {formatPrice(
-                                                                        pack.currency === "XOF"
-                                                                            ? "fr-FR"
-                                                                            : "en-US",
-                                                                        pack.price,
-                                                                        pack.currency
-                                                                    )}
+                                                                    {pack.price}
                                                                 </span>
-
-                                                                {pack.currency === "EUR" ? (
-                                                                    <sup>&euro;</sup>
-                                                                ) : pack.currency === "USD" ? (
-                                                                    <sup>&dollar;</sup>
-                                                                ) : (
-                                                                    <sup>FCFA</sup>
-                                                                )}
+                                                                <sup>{pack.currency}</sup>
                                                             </h2>
                                                             <span>
-                                                                Par{" "}
+                                                                {t('home.per')}{" "}
                                                                 {pack.period.replace(
                                                                     pack.period[0],
                                                                     pack.period[0].toUpperCase()
                                                                 )}{" "}
-                                                                HT
+                                                                {t('home.beforeTax')}
                                                             </span>
                                                         </div>
                                                         <div className="features-price-list">
-                                                            <h5>Options</h5>
-                                                            <p>Vidéos</p>
+                                                            <h6 className="text-muted mb-3">{pack.target ? t(pack.target) : ''}</h6>
                                                             <ul>
-                                                                <li className="active">
-                                                                    <i className="feather-check-circle" />
-                                                                    Inclus : Championnat de U20
-                                                                </li>
-                                                                <li className="active">
-                                                                    <i className="feather-check-circle" />
-                                                                    Inclus : Analyse Data (Données){" "}
-                                                                </li>
+                                                                {pack.features && pack.features.map((feature: string, idx: number) => (
+                                                                    <li key={idx} className="active">
+                                                                        <i className="feather-check-circle text-success" />
+                                                                        {t(feature)}
+                                                                    </li>
+                                                                ))}
                                                             </ul>
                                                         </div>
                                                         <div className="price-choose">
@@ -285,10 +357,10 @@ const Pricing = () => {
                                                                 {loading ? (
                                                                     <>
                                                                         <i className="feather-loader me-2"></i>
-                                                                        Traitement...
+                                                                        {t('home.processing')}
                                                                     </>
                                                                 ) : (
-                                                                    "Choisissez votre pack"
+                                                                    t('home.choosePack')
                                                                 )}
                                                             </button>
                                                         </div>
