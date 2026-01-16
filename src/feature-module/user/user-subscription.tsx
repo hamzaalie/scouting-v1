@@ -544,7 +544,7 @@ const UserSubscription = () => {
                     
                     <div className="text-center mb-4">
                       <h2 className="display-4 mb-0">
-                        <span className="currency">$</span>
+                        <span className="currency">€</span>
                         {plan.price}
                       </h2>
                       <small className="text-muted">per {plan.duration} days</small>

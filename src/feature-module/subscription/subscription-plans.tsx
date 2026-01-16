@@ -104,7 +104,7 @@ const SubscriptionPlans = () => {
                 
                 <div className="mb-6">
                   <span className="text-5xl font-bold text-gray-900">
-                    ${plan.price}
+                    €{plan.price}
                   </span>
                   <span className="text-gray-600 ml-2">
                     / {plan.duration} days
